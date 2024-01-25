@@ -1,0 +1,15 @@
+{
+  "title": "5001 too large",
+  "input": {
+    "WHERE": {
+      "LT": {
+        "test5000_year": 5001
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": ["test5000_uuid"]
+    }
+  },
+  "errorExpected": true,
+  "expected": "ResultTooLargeError"
+}

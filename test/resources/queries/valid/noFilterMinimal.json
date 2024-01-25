@@ -1,0 +1,51 @@
+{
+  "title": "no filter minimal",
+  "input": {
+    "WHERE": {},
+    "OPTIONS": {
+      "COLUMNS": ["minimal_uuid"]
+    }
+  },
+  "errorExpected": false,
+  "expected": [
+    { "minimal_uuid": "1293" },
+    { "minimal_uuid": "1294" },
+    { "minimal_uuid": "1295" },
+    { "minimal_uuid": "3393" },
+    { "minimal_uuid": "3394" },
+    { "minimal_uuid": "25818" },
+    { "minimal_uuid": "25819" },
+    { "minimal_uuid": "39884" },
+    { "minimal_uuid": "39885" },
+    { "minimal_uuid": "43202" },
+    { "minimal_uuid": "43203" },
+    { "minimal_uuid": "46694" },
+    { "minimal_uuid": "46695" },
+    { "minimal_uuid": "46696" },
+    { "minimal_uuid": "49892" },
+    { "minimal_uuid": "49893" },
+    { "minimal_uuid": "49894" },
+    { "minimal_uuid": "52004" },
+    { "minimal_uuid": "52005" },
+    { "minimal_uuid": "52006" },
+    { "minimal_uuid": "61122" },
+    { "minimal_uuid": "61123" },
+    { "minimal_uuid": "61124" },
+    { "minimal_uuid": "62385" },
+    { "minimal_uuid": "62386" },
+    { "minimal_uuid": "62387" },
+    { "minimal_uuid": "67312" },
+    { "minimal_uuid": "67313" },
+    { "minimal_uuid": "72359" },
+    { "minimal_uuid": "72360" },
+    { "minimal_uuid": "72361" },
+    { "minimal_uuid": "75605" },
+    { "minimal_uuid": "75606" },
+    { "minimal_uuid": "83431" },
+    { "minimal_uuid": "83432" },
+    { "minimal_uuid": "83433" },
+    { "minimal_uuid": "90539" },
+    { "minimal_uuid": "90540" },
+    { "minimal_uuid": "90541" }
+  ]
+}

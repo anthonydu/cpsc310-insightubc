@@ -1,0 +1,24 @@
+{
+  "title": "multiple datasets where",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "IS": {
+            "sections_dept": "cpsc"
+          }
+        },
+        {
+          "IS": {
+            "minimal_dept": "cpsc"
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": ["sections_uuid"]
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

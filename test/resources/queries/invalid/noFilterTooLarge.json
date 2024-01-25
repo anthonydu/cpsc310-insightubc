@@ -1,0 +1,11 @@
+{
+  "title": "no filter too large",
+  "input": {
+    "WHERE": {},
+    "OPTIONS": {
+      "COLUMNS": ["sections_uuid"]
+    }
+  },
+  "errorExpected": true,
+  "expected": "ResultTooLargeError"
+}

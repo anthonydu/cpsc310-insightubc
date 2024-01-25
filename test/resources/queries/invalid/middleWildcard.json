@@ -1,0 +1,10 @@
+{
+  "title": "middle wildcard",
+  "input": {
+    "IS": {
+      "sections_dept": "c*sc"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}
