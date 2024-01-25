@@ -26,14 +26,14 @@ const errors = {
 	ResultTooLargeError,
 };
 
-describe("InsightFacade (Anthony Du)", () => {
+describe("InsightFacade (antdu)", () => {
 	let facade: IInsightFacade;
 	let minDataset: string;
-	let validQueries = readFileQueries("valid");
-	let invalidQueries = readFileQueries("invalid");
+	let validQueries = readFileQueries("antdu/valid");
+	let invalidQueries = readFileQueries("antdu/invalid");
 
 	before(async () => {
-		minDataset = await getContentFromArchives("cpsc310.zip");
+		minDataset = await getContentFromArchives("antdu/cpsc310.zip");
 		console.log("before all");
 	});
 
@@ -81,19 +81,27 @@ describe("InsightFacade (Anthony Du)", () => {
 			});
 			it("no course content rejected", async () => {
 				return expect(
-					facade.addDataset("a", await getContentFromArchives("noCourses.zip"), InsightDatasetKind.Sections)
+					facade.addDataset(
+						"a",
+						await getContentFromArchives("antdu/noCourses.zip"),
+						InsightDatasetKind.Sections
+					)
 				).to.eventually.be.rejectedWith(InsightError);
 			});
 			it("no section content rejected", async () => {
 				return expect(
-					facade.addDataset("a", await getContentFromArchives("noSections.zip"), InsightDatasetKind.Sections)
+					facade.addDataset(
+						"a",
+						await getContentFromArchives("antdu/noSections.zip"),
+						InsightDatasetKind.Sections
+					)
 				).to.eventually.be.rejectedWith(InsightError);
 			});
 			it("invalid file structure content rejected", async () => {
 				return expect(
 					facade.addDataset(
 						"a",
-						await getContentFromArchives("invalidFileStructure.zip"),
+						await getContentFromArchives("antdu/invalidFileStructure.zip"),
 						InsightDatasetKind.Sections
 					)
 				).to.eventually.be.rejectedWith(InsightError);
@@ -102,7 +110,7 @@ describe("InsightFacade (Anthony Du)", () => {
 				return expect(
 					facade.addDataset(
 						"a",
-						await getContentFromArchives("invalidSyntax.zip"),
+						await getContentFromArchives("antdu/invalidSyntax.zip"),
 						InsightDatasetKind.Sections
 					)
 				).to.eventually.be.rejectedWith(InsightError);
@@ -176,7 +184,7 @@ describe("InsightFacade (Anthony Du)", () => {
 			await facade.addDataset("minimal", minDataset, InsightDatasetKind.Sections);
 			await facade.addDataset(
 				"test5000",
-				await getContentFromArchives("test5000.zip"),
+				await getContentFromArchives("antdu/test5000.zip"),
 				InsightDatasetKind.Sections
 			);
 			console.log("before dynamic");
