@@ -9,9 +9,11 @@ import InsightFacade from "../../src/controller/InsightFacade";
 
 import {expect, use} from "chai";
 
+import chaiAsPromised from "chai-as-promised";
+
 import {clearDisk, getContentFromArchives, readFileQueries} from "../TestUtil";
 
-use(require("chai-as-promised"));
+use(chaiAsPromised);
 
 export interface ITestQuery {
 	title: string;
