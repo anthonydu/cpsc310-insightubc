@@ -36,18 +36,18 @@ describe("InsightFacade (antdu)", () => {
 
 	before(async () => {
 		minDataset = await getContentFromArchives("antdu/cpsc310.zip");
-		console.log("before all");
+		// console.log("before all");
 	});
 
 	beforeEach(() => {
 		facade = new InsightFacade();
-		console.log("beforeEach all");
+		// console.log("beforeEach all");
 	});
 
 	describe("static tests", () => {
 		afterEach(async () => {
 			await clearDisk();
-			console.log("afterEach static");
+			// console.log("afterEach static");
 		});
 
 		describe("#addDataset()", () => {
@@ -189,7 +189,7 @@ describe("InsightFacade (antdu)", () => {
 				await getContentFromArchives("antdu/test5000.zip"),
 				InsightDatasetKind.Sections
 			);
-			console.log("before dynamic");
+			// console.log("before dynamic");
 		});
 		validQueries.forEach((validQuery) => {
 			it(`${validQuery.title} fulfilled`, () => {
