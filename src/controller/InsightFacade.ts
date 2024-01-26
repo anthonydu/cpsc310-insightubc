@@ -46,7 +46,7 @@ export default class InsightFacade implements IInsightFacade {
 				throw new InsightError("No courses folder.");
 			}
 			const files: Array<Promise<string>> = [];
-			for (const file of Object.values(courses?.files || {})) {
+			for (const file of Object.values(courses.files)) {
 				files.push(file.async("string"));
 			}
 			for (const file of await Promise.all(files)) {
