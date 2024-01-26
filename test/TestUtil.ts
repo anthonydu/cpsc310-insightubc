@@ -6,7 +6,7 @@ import {ITestQuery} from "./controller/InsightFacade.spec";
  *
  * NOTE: this variable should _not_ be referenced from production code.
  */
-const persistDir = "./data";
+const persistDir = "../data";
 
 /**
  * Convert a file into a base64 string.
