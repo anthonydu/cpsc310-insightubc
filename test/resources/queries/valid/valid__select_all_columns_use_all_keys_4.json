@@ -1,0 +1,117 @@
+{
+	"title": "valid__select_all_columns_use_all_keys_4",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"AND": [
+						{
+							"GT": {
+								"sections_avg": 95
+							}
+						},
+						{
+							"GT": {
+								"sections_pass": 90
+							}
+						}
+					]
+				},
+				{
+					"OR": [
+						{
+							"LT": {
+								"sections_fail": 10
+							}
+						},
+						{
+							"LT": {
+								"sections_audit": 20
+							}
+						},
+						{
+							"LT": {
+								"sections_year": 2010
+							}
+						}
+					]
+				},
+				{
+					"OR": [
+						{
+							"IS": {
+								"sections_instructor": "*"
+							}
+						},
+						{
+							"IS": {
+								"sections_dept": "*p*"
+							}
+						},
+						{
+							"IS": {
+								"sections_id": "*0"
+							}
+						}
+					]
+				},
+				{
+					"AND": [
+						{
+							"IS": {
+								"sections_uuid": "*"
+							}
+						},
+						{
+							"IS": {
+								"sections_title": "*e*"
+							}
+						}
+					]
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"sections_uuid",
+				"sections_id",
+				"sections_instructor",
+				"sections_dept",
+				"sections_title",
+				"sections_avg",
+				"sections_year",
+				"sections_pass",
+				"sections_fail",
+				"sections_audit"
+			],
+			"ORDER": "sections_instructor"
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"sections_uuid": "65068",
+			"sections_id": "200",
+			"sections_instructor": "",
+			"sections_dept": "spph",
+			"sections_title": "sociocult determ",
+			"sections_avg": 95.76,
+			"sections_year": 1900,
+			"sections_pass": 92,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "83047",
+			"sections_id": "403",
+			"sections_instructor": "lalji, fawziah;seto, katherine",
+			"sections_dept": "phar",
+			"sections_title": "admn of injectns",
+			"sections_avg": 95.07,
+			"sections_year": 2014,
+			"sections_pass": 121,
+			"sections_fail": 0,
+			"sections_audit": 0
+		}
+	]
+}

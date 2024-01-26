@@ -1,0 +1,13 @@
+{
+	"title": "invalid_empty_string_reference_dataset",
+	"input": {
+		"WHERE": {},
+		"OPTIONS": {
+			"COLUMNS": [
+				"hello"
+			]
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}

@@ -1,5 +1,5 @@
 {
-	"title": "SELECT dept, id, avg WHERE avg == 95 || avg > 90 && dept == 'adhe' ORDER BY avg",
+	"title": "valid_repeated_column_name",
 	"input": {
 		"WHERE": {
 			"OR": [
@@ -26,6 +26,7 @@
 		},
 		"OPTIONS": {
 			"COLUMNS": [
+				"sections_dept",
 				"sections_dept",
 				"sections_id",
 				"sections_avg"

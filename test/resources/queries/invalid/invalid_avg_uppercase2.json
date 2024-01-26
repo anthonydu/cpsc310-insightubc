@@ -1,0 +1,19 @@
+{
+	"title": "invalid_avg_uppercase2",
+	"input": {
+		"WHERE": {
+			"LT": {
+				"sections_avg": 1
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"sections_dept",
+				"sections_AVG"
+			],
+			"ORDER": "sections_AVG"
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}

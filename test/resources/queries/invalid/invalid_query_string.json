@@ -1,0 +1,7 @@
+{
+	"title": "invalid_query_string",
+	"input": []
+	,
+	"errorExpected": true,
+	"expected": "InsightError"
+}

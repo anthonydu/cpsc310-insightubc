@@ -1,5 +1,5 @@
 {
-	"title": "SELECT dept, avg WHERE avg > 97",
+	"title": "successful_simple_query",
 	"input": {
 		"WHERE": {
 			"GT": {

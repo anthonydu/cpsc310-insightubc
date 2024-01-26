@@ -1,3 +1,4 @@
+// import JSZip from "jszip";
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightResult} from "./IInsightFacade";
 
 /**
@@ -5,6 +6,7 @@ import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightResult} from 
  * Method documentation is in IInsightFacade
  *
  */
+
 export default class InsightFacade implements IInsightFacade {
 	constructor() {
 		console.log("InsightFacadeImpl::init()");
@@ -26,3 +28,7 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.reject("Not implemented.");
 	}
 }
+function isSectionValid(section: any) {
+	throw new Error("Function not implemented.");
+}
+
