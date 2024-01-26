@@ -19,6 +19,23 @@ export interface InsightResult {
 	[key: string]: string | number;
 }
 
+export interface PersistDataset extends InsightDataset {
+	data: Section[];
+}
+
+export interface Section {
+	uuid: string;
+	id: string;
+	title: string;
+	instructor: string;
+	dept: string;
+	year: string;
+	avg: string;
+	pass: string;
+	fail: string;
+	audit: string;
+}
+
 export class InsightError extends Error {
 	constructor(message?: string) {
 		super(message);
