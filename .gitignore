@@ -17,3 +17,6 @@ data/
 .DS_Store
 .env
 *.log
+
+# nyc
+.nyc_output/
