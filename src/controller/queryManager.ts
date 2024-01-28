@@ -7,10 +7,12 @@ export class QueryManager {
 	private query: unknown;
 	private result: InsightResult[];
 	private errors: string[];
+	private ids: Set<string>;
 	constructor(query: unknown) {
 		this.query = query;
 		this.result = [];
 		this.errors = [];
+		this.ids = new Set();
 	}
 
 	public async execute(): Promise<InsightResult[]> {
@@ -30,16 +32,34 @@ export class QueryManager {
 		}
 	}
 
-	public isValid(): boolean{
+	public validate(): boolean{
 		let error: string;
 		const parsedQuery = this.query as QUERY;
+
+		//	empty errors and ids from previous validations
+		this.resetValues();
 
 		if(!this.isValidJSON(this.query as string)){
 			error =  "Query not a valid json" ;
 			this.errors.push(error);
 			return false;
 		}
-		return this.validateWHERE(parsedQuery.WHERE) && this.validateOPTIONS(parsedQuery.OPTIONS);
+
+		// add logic to make sure that an error is return is a dataset does not exist
+		if(!this.validateWHERE(parsedQuery.WHERE)){
+			return false;
+		}
+
+		if(!this.validateOPTIONS(parsedQuery.OPTIONS)){
+			return false;
+		}
+		// logic to validate if a query references two different dataset ids
+		if(this.ids.size !== 1){
+			error = "Multiple data sets referenced";
+			this.errors.push(error);
+			return false;
+		}
+		return  true;
 	}
 
 	public IS() {
@@ -72,6 +92,20 @@ export class QueryManager {
 
 	public OR(){
 		console.log(" ");
+	}
+
+	private resetValues(){
+		this.errors = [];
+		this.ids = new Set();
+
+	}
+
+	public getErrors(): string[]{
+		return this.errors;
+	}
+
+	public getIds(): string[]{
+		return [...this.ids];
 	}
 
 	private isValidMComparator(mcomp: MCOMPARATOR): boolean {
@@ -325,6 +359,7 @@ export class QueryManager {
 	private validateIDString(str: IDSTRING): boolean {
 		let error: string;
 		const pattern = new RegExp("[^_]+");
+		this.ids.add(str);
 		if(!pattern.test(str)){
 			error = `invalid idstring ${str}`;
 			this.errors.push(error);

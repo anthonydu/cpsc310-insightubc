@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 import JSZip from "jszip";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult} from "./IInsightFacade";
+// eslint-disable-next-line max-len
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, ResultTooLargeError} from "./IInsightFacade";
 import {QueryManager} from "./queryManager";
 
 
@@ -72,11 +73,6 @@ class DataManager {
 
 
 	}
-}
-
-interface ValidationResponse{
-	valid: boolean,
-	reason?: string
 }
 
 export default class InsightFacade implements IInsightFacade {
@@ -159,12 +155,35 @@ export default class InsightFacade implements IInsightFacade {
 
 	public async performQuery(query: unknown): Promise<InsightResult[]> {
 		const queryManager: QueryManager = new QueryManager(query);
-		try {
-			return await queryManager.execute();
+		const maxLength: number = 5000;
+		const ids = queryManager.getIds();
+		const datasets = await this.listDatasets();
+		const result = await queryManager.execute();
 
-		} catch (error) {
-			return Promise.reject("Not implemented.");
-		}
+		return new Promise((resolve, reject) =>{
+
+			let match: string = "";
+			for(const dset of datasets){
+				if(dset.id === ids[0]){
+					match = dset.id;
+
+				}
+			}
+			if(match === ""){
+				return reject(new InsightError("Provided id does not have an associated dataset"));
+			}
+
+			const validated = queryManager.validate();
+			if(validated){
+				if(result.length > maxLength){
+					return reject(new ResultTooLargeError("Result size exceeds the maximum allowed threshold"));
+				}
+				return resolve(result);
+			}
+			const errors: string[] = queryManager.getErrors();
+			return reject(new InsightError(errors[0]));
+
+		});
 
 	}
 
