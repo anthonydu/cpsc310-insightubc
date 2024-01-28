@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 // eslint-disable-next-line max-len
 import {FILTER, IDSTRING, MCOMPARISON, OPTIONS, QUERY, SCOMPARISON, SKEY,MKEY, MFIELD,SFIELD, MCOMPARATOR, LOGIC, LOGICCOMPARISON, NEGATION} from "./queryTypes";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult} from "./IInsightFacade";
+import {InsightResult} from "./IInsightFacade";
 
 export class QueryManager {
 	private query: unknown;
