@@ -8,11 +8,13 @@ export class QueryManager {
 	private result: InsightResult[];
 	private errors: string[];
 	private ids: Set<string>;
+	private data: any;
 	constructor(query: unknown) {
 		this.query = query;
 		this.result = [];
 		this.errors = [];
 		this.ids = new Set();
+		this.data = [];
 	}
 
 	public async execute(): Promise<InsightResult[]> {
@@ -62,35 +64,35 @@ export class QueryManager {
 		return  true;
 	}
 
-	public IS() {
+	public IS(scomp: SCOMPARISON) {
 		console.log("");
 	}
 
-	public EQ() {
+	public EQ(mcomp: MCOMPARISON) {
 		console.log("");
 	}
 
-	public GT() {
+	public GT(mcomp: MCOMPARISON) {
 		console.log("");
 	}
 
-	public LT() {
+	public LT(mcomp: MCOMPARISON) {
 		console.log("");
 	}
 
-	public NOT() {
+	public NOT(negation: NEGATION) {
 		console.log("");
 	}
 
-	public ORDER(){
+	public ORDER(order: unknown){
 		console.log(" ");
 	}
 
-	public AND(){
+	public AND(logicComp: LOGICCOMPARISON){
 		console.log(" ");
 	}
 
-	public OR(){
+	public OR(logicComp: LOGICCOMPARISON){
 		console.log(" ");
 	}
 
