@@ -29,11 +29,11 @@ export interface Section {
 	title: string;
 	instructor: string;
 	dept: string;
-	year: string;
-	avg: string;
-	pass: string;
-	fail: string;
-	audit: string;
+	year: number;
+	avg: number;
+	pass: number;
+	fail: number;
+	audit: number;
 }
 
 export class InsightError extends Error {

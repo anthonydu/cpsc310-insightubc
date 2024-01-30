@@ -22,12 +22,13 @@ export default class InsightFacade implements IInsightFacade {
 		try {
 			return await fs.readJson(persistFile);
 		} catch {
+			// TODO possibly throw an error here
 			return [];
 		}
 	}
 
 	private static idInvalid(datasets: PersistDataset[], id: string) {
-		return id === "" || id.includes("_") || id.trim() === "";
+		return id.includes("_") || id.trim() === "";
 	}
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -99,7 +100,8 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public async listDatasets(): Promise<InsightDataset[]> {
-		return ((await InsightFacade.readPersist()) as PersistDataset[]).map((dataset) => ({
+		const datasets: PersistDataset[] = await InsightFacade.readPersist();
+		return datasets.map((dataset) => ({
 			id: dataset.id,
 			kind: dataset.kind,
 			numRows: dataset.numRows,
