@@ -1,20 +1,22 @@
 /* eslint-disable max-lines */
 // eslint-disable-next-line max-len
-import {FILTER, IDSTRING, MCOMPARISON, OPTIONS, QUERY, SCOMPARISON, SKEY,MKEY, MFIELD,SFIELD, MCOMPARATOR, LOGIC, LOGICCOMPARISON, NEGATION} from "./queryTypes";
+import {FILTER, IDSTRING, MCOMPARISON, OPTIONS, QUERY, SCOMPARISON, SKEY,MKEY, MFIELD,SFIELD, MCOMPARATOR, LOGIC, LOGICCOMPARISON, NEGATION, Section, PersistDataset} from "./queryTypes";
 import {InsightResult} from "./IInsightFacade";
+import {DataManager} from "./DataManager";
+
 
 export class QueryManager {
 	private query: unknown;
 	private result: InsightResult[];
 	private errors: string[];
 	private ids: Set<string>;
-	private data: any;
+	private dataManager: DataManager;
 	constructor(query: unknown) {
 		this.query = query;
 		this.result = [];
 		this.errors = [];
 		this.ids = new Set();
-		this.data = [];
+		this.dataManager = new DataManager([]);
 	}
 
 	public async execute(): Promise<InsightResult[]> {
@@ -64,36 +66,129 @@ export class QueryManager {
 		return  true;
 	}
 
-	public IS(scomp: SCOMPARISON) {
-		console.log("");
+	private matchPattern(inputString: string, fieldValue: string): boolean {
+		// Case 1: Matches inputstring exactly
+		const wildCard: string = "*";
+		const matchExat: boolean = !inputString.startsWith(wildCard) && !inputString.endsWith(wildCard);
+		const matchRight: boolean = inputString.startsWith(wildCard) && !inputString.endsWith(wildCard);
+		const matchLeft: boolean = !inputString.startsWith(wildCard) && inputString.endsWith(wildCard);
+		const matchCenter: boolean = inputString.startsWith(wildCard) && inputString.endsWith(wildCard);
+
+		if (matchExat) {
+			return inputString === fieldValue;
+		} else if (matchRight) {
+			return fieldValue.endsWith(inputString);
+		} else if (matchLeft) {
+			return fieldValue.startsWith(inputString);
+		} else if (matchCenter) {
+			const trimmedInput = inputString.slice(1, -1);
+			return fieldValue.includes(trimmedInput);
+		} else {
+			return false;
+		}
 	}
 
-	public EQ(mcomp: MCOMPARISON) {
-		console.log("");
+	private getValueByFieldName<T, K extends keyof T>(obj: T, fieldName: K): T[K] {
+		return obj[fieldName];
 	}
 
-	public GT(mcomp: MCOMPARISON) {
-		console.log("");
+	public IS(scomp: SCOMPARISON,section: Section): boolean {
+		// query will be validated before it arrives here,
+		// we can therefore be sure that the line below will not produce an error
+		const body: Record<string,string> = Object.values(scomp)[0];
+		const skey: string = Object.keys(body)[0];
+		const svalue: string = body[skey];
+		const delimiter: string = "_";
+		const parts: string[] = skey.split(delimiter);
+		const sfield = parts[1];
+		const fieldValue: string = this.getValueByFieldName(section,sfield as keyof Section) as string;
+		return this.matchPattern(svalue,fieldValue as string);
+
+
 	}
 
-	public LT(mcomp: MCOMPARISON) {
-		console.log("");
+	public EQ(mcomp: MCOMPARISON,section: Section): boolean{
+		const body: Record<string,number> = mcomp.EQ;
+		const mkey: string = Object.keys(body)[0];
+		const mvalue: number = body[mkey];
+		const delimiter: string = "_";
+		const parts: string[] = mkey.split(delimiter);
+		const sfield = parts[1];
+		const fieldValue: number = this.getValueByFieldName(section,sfield as keyof Section) as number;
+		return fieldValue === mvalue;
 	}
 
-	public NOT(negation: NEGATION) {
-		console.log("");
+	public GT(mcomp: MCOMPARISON,section: Section): boolean {
+		const body: Record<string,number> = mcomp.GT;
+		const mkey: string = Object.keys(body)[0];
+		const mvalue: number = body[mkey];
+		const delimiter: string = "_";
+		const parts: string[] = mkey.split(delimiter);
+		const sfield = parts[1];
+		const fieldValue: number = this.getValueByFieldName(section,sfield as keyof Section) as number;
+		return fieldValue > mvalue;
 	}
 
-	public ORDER(order: unknown){
-		console.log(" ");
+	public LT(mcomp: MCOMPARISON, section: Section): boolean {
+		const body: Record<string,number> = mcomp.LT;
+		const mkey: string = Object.keys(body)[0];
+		const mvalue: number = body[mkey];
+		const delimiter: string = "_";
+		const parts: string[] = mkey.split(delimiter);
+		const sfield = parts[1];
+		const fieldValue: number = this.getValueByFieldName(section,sfield as keyof Section) as number;
+		return fieldValue < mvalue;
 	}
 
-	public AND(logicComp: LOGICCOMPARISON){
-		console.log(" ");
+	public NOT(negation: NEGATION,section: Section): boolean {
+		const filter: FILTER = negation.NOT;
+
+		return this.FILTER(filter,section);
 	}
 
-	public OR(logicComp: LOGICCOMPARISON){
-		console.log(" ");
+	public ORDER(order: unknown): boolean{
+		return false;
+	}
+
+	public AND(logicComp: LOGICCOMPARISON,section: Section): boolean{
+		// TODO: finish this
+		return false;
+	}
+
+	public OR(logicComp: LOGICCOMPARISON,section: Section): boolean{
+		// TODO: finish this
+		return false;
+	}
+
+	public FILTER(filter: FILTER,section: Section): boolean{
+		// should be recursive
+		// TODO: finish this
+		return false;
+	}
+
+	public MCOMPARISON(mcomp: MCOMPARISON,section: Section): boolean{
+		const eq: unknown = mcomp.EQ;
+		if(eq){
+			return this.EQ(mcomp,section);
+		}
+		const lt: unknown = mcomp.LT;
+		if(lt){
+			return this.LT(mcomp,section);
+		}
+		return this.GT(mcomp,section);
+	}
+
+	public SCOMPARISON(scomp: SCOMPARISON,section: Section): boolean{
+		return this.IS(scomp,section);
+	}
+
+	public LOGICCOMPARISON(lcomp: LOGICCOMPARISON,section: Section): boolean{
+		const and = lcomp.AND;
+		if(and){
+			return this.AND(lcomp,section);
+		}else{
+			return this.OR(lcomp,section);
+		}
 	}
 
 	private resetValues(){
@@ -191,6 +286,11 @@ export class QueryManager {
 			return this.validateInputString(inputString) && this.validateSkey(skey as SKEY);
 		}
 
+	}
+
+	private getQueryDatasetId(){
+		const arr = [...this.ids];
+		return arr[0];
 	}
 
 	public isValidLogic(logic: LOGIC): logic is LOGIC{

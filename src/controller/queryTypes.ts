@@ -1,3 +1,5 @@
+import {InsightDataset} from "./IInsightFacade";
+
 export type LOGIC = "AND" | "OR";
 export type MCOMPARATOR = "LT" | "GT" | "EQ";
 
@@ -42,3 +44,21 @@ export interface QUERY {
     WHERE: FILTER | Record<never,never>; // FILTER of an empty object
     OPTIONS: OPTIONS;
 }
+
+export interface Section {
+	uuid: string;
+	id: string;
+	title: string;
+	instructor: string;
+	dept: string;
+	year: number;
+	avg: number;
+	pass: number;
+	fail: number;
+	audit: number;
+}
+
+export interface PersistDataset extends InsightDataset {
+	sections: Section[];
+}
+
