@@ -1,17 +1,18 @@
 import InsightFacade from "../../src/controller/InsightFacade";
 // eslint-disable-next-line max-len
-import {InsightDatasetKind, InsightError, NotFoundError, ResultTooLargeError} from "../../src/controller/IInsightFacade";
-import {clearDisk, getContentFromArchives} from "../resources/archives/TestUtil";
+import {
+	InsightDatasetKind,
+	InsightError,
+	NotFoundError,
+	ResultTooLargeError,
+} from "../../src/controller/IInsightFacade";
+import {clearDisk, getContentFromArchives, readFileQueries} from "../TestUtil";
 import {expect} from "chai";
 import "mocha";
 import "chai-as-promised";
-import * as fs from "fs-extra";
-import JSZip from "jszip";
-
 
 // Taken from the specification page as recommended
 export interface ITestQuery {
-
 	title: string; // title of the test case
 
 	input: unknown; // the query under test
@@ -19,104 +20,22 @@ export interface ITestQuery {
 	errorExpected: boolean; // if the query is expected to throw an error
 
 	expected: any; // the expected result
-
-}
-
-
-function isIDValid(id: string): boolean {
-	const trimmedId = id.trim();
-	const emptyString = "";
-	const underscore = "_";
-
-	return trimmedId === emptyString || trimmedId.includes(underscore);
-}
-
-// check if any of the sections is missing a query key
-function isSectionValid(section: {[x: string]: undefined;}): boolean {
-	const queryKeys: string[] = ["id", "Course", "Title", "Professor",
-		"Subject", "Year", "Avg", "Pass", "Fail", "Audit"];
-	for (const key of queryKeys) {
-		if (section[key] === undefined) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-function isCourseValid(course: string): boolean {
-	try {
-		const data = JSON.parse(course); // any JSOn error will be caught within catch
-		const sections = data.result;
-
-		// a course is valid if it has no invalid section
-		// therefore, invalidate course if any such section is found :)
-		// waiting on piazza confirmation to see if this interpretation is correct
-		for (const section of sections) {
-			if (!isSectionValid(section)) {
-				return false;
-			}
-		}
-		return true;
-	} catch (error) {
-		return false;
-	}
-}
-async function isDataSetValid(content: string): Promise<boolean> {
-
-	return false;
-}
-
-async function getCoursesJSONData(content: string) {
-	try {
-		const zipObj = new JSZip();
-		await zipObj.loadAsync(content).then(async (zip: JSZip) => {
-			const subfolder = zip.folder("courses");
-			const allCourses: string[] = [];
-
-			if (subfolder) {
-				const filesObj = subfolder.files;
-				const filePaths = Object.keys(filesObj);
-				for (const coursePath of filePaths) {
-					const courseFile = subfolder.file(coursePath);
-					const courseContent = await courseFile?.async("string");
-					if (courseContent) {
-						allCourses.push(courseContent);
-					}
-
-				}
-			}
-			return allCourses;
-		});
-	} catch (error: any) {
-		throw new Error(error.message);
-	}
-
-
 }
 
 function testAddDataset() {
-
-
 	describe("addDataset-Id tests", () => {
 		let sections: string;
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("valid1.zip");
-
+			sections = await getContentFromArchives("syabre/valid1.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject with  an empty string as dataset id", async () => {
 			try {
@@ -126,8 +45,6 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
 		it("should reject with  an empty-space dataset id", async () => {
 			try {
@@ -136,10 +53,7 @@ function testAddDataset() {
 				expect.fail("Should have rejected with empty characters as id");
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
-
 			}
-
-
 		});
 
 		it("should reject with  an  dataset id with an underscore1", async function () {
@@ -150,8 +64,6 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
 		it("should reject with  an  dataset id with an underscore2", async () => {
 			try {
@@ -159,12 +71,9 @@ function testAddDataset() {
 				await facade.addDataset(id, sections, InsightDatasetKind.Sections);
 
 				expect.fail("Should have rejected with dataset id `ubc_`");
-
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
 		it("should reject with  an  dataset id with an underscore3", async () => {
 			try {
@@ -174,8 +83,6 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
 		it("should reject with  an  dataset id with an underscore4", async () => {
 			try {
@@ -185,9 +92,7 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
 		});
-
 
 		it("should reject if id already exists", async () => {
 			try {
@@ -208,7 +113,6 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect.fail("Dataset should have been added successfully with id `cs`");
 			}
-
 		});
 		it("should add successfully, remove and be able to add succesffully again", async () => {
 			try {
@@ -222,11 +126,7 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect.fail("Should have added without error--adding, removing and adding again");
 			}
-
-
 		});
-
-
 	});
 	// Test - Add invalid dataset
 	describe("addDataset-Invalid Sections-courses not within the /courses folder", () => {
@@ -234,33 +134,24 @@ function testAddDataset() {
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("nodir-courses-valid-content.zip");
-
+			sections = await getContentFromArchives("syabre/nodir-courses-valid-content.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject with  missing courses folder", async () => {
 			try {
 				const id = "ubc2";
 				await facade.addDataset(id, sections, InsightDatasetKind.Sections);
 				expect.fail("Should have rejected data without /courses folder");
-
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
 		});
-
-
 	});
 	// Test - Add invalid dataset
 	describe("addDataset-Invalid Sections-courses not within the /courses folder", () => {
@@ -268,35 +159,24 @@ function testAddDataset() {
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("invalid-sections.zip");
-
+			sections = await getContentFromArchives("syabre/invalid-sections.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject with invalid sections1", async () => {
 			try {
 				const id = "ubcok";
 				await facade.addDataset(id, sections, InsightDatasetKind.Sections);
 				expect.fail("Should reject dataset with invalid sections");
-
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
-
-
 	});
 	// Test - Add invalid dataset--missing JSON brackets
 	describe("addDataset-Invalid -- missing JSON brackets", () => {
@@ -304,20 +184,14 @@ function testAddDataset() {
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("invalidJSON-missing-brackets.zip");
-
+			sections = await getContentFromArchives("syabre/invalidJSON-missing-brackets.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject with invalid sections2", async () => {
 			try {
@@ -327,11 +201,7 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
-
-
 	});
 
 	// Test - Add invalid dataset--missing JSON quotations
@@ -340,35 +210,24 @@ function testAddDataset() {
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("invalidJSON-missing-quotations.zip");
-
+			sections = await getContentFromArchives("syabre/invalidJSON-missing-quotations.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject with invalid sections4", async () => {
 			try {
 				const id = "ubc3";
 				await facade.addDataset(id, sections, InsightDatasetKind.Sections);
 				expect.fail("Should not add dataset with invalid course sections");
-
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
-
-
 	});
 	// Test - Add invalid dataset--missing JSON format
 	describe("addDataset-Invalid Missing JSON", () => {
@@ -376,20 +235,14 @@ function testAddDataset() {
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("no-JSON.zip");
-
+			sections = await getContentFromArchives("syabre/no-JSON.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject with invalid sections5", async () => {
 			try {
@@ -400,8 +253,6 @@ function testAddDataset() {
 				expect(error).to.be.instanceOf(InsightError);
 			}
 		});
-
-
 	});
 	// Test - Add invalid dataset--empty course
 	describe("addDataset-Invalid Missing JSON", () => {
@@ -409,25 +260,18 @@ function testAddDataset() {
 		let sections2: string;
 		let sections3: string;
 
-
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("empty.zip");
-			sections2 = await getContentFromArchives("2empty.zip");
-			sections3 = await getContentFromArchives("multiple-empty.zip");
-
+			sections = await getContentFromArchives("syabre/empty.zip");
+			sections2 = await getContentFromArchives("syabre/2empty.zip");
+			sections3 = await getContentFromArchives("syabre/multiple-empty.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject with invalid dataset because of course with empty sections", async () => {
 			try {
@@ -456,10 +300,7 @@ function testAddDataset() {
 				expect(error).to.be.instanceOf(InsightError);
 			}
 		});
-
-
 	});
-
 
 	// Test - Add multiple valid courses
 	describe("addDataset-valid-multiple courses", () => {
@@ -468,21 +309,15 @@ function testAddDataset() {
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("multiple-valid.zip");
-			sections2 = await getContentFromArchives("1.empty-1.valid.zip");
-
+			sections = await getContentFromArchives("syabre/multiple-valid.zip");
+			sections2 = await getContentFromArchives("syabre/1.empty-1.valid.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should add dataset with valid sections", async () => {
 			try {
@@ -495,8 +330,6 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect.fail("Should not have rejected an error courses with valid sections");
 			}
-
-
 		});
 		it("should add dataset with valid sections 2", async () => {
 			try {
@@ -506,11 +339,7 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect.fail("Should not have rejected an error courses with valid sections");
 			}
-
-
 		});
-
-
 	});
 
 	// Test Sections
@@ -519,20 +348,14 @@ function testAddDataset() {
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("valid1.zip");
-
+			sections = await getContentFromArchives("syabre/valid1.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject with  empty section", async () => {
 			try {
@@ -552,7 +375,6 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
 		});
 		it("should accept valid sections ", async () => {
 			try {
@@ -562,15 +384,9 @@ function testAddDataset() {
 			} catch (error: any) {
 				expect.fail("Expected dataset to be added successfully");
 			}
-
-
 		});
-
-
 	});
-
-}// here ends add tests-
-
+} // here ends add tests-
 
 function testRemoveDataset() {
 	describe("RemoveDataset", () => {
@@ -578,20 +394,14 @@ function testRemoveDataset() {
 
 		let facade: InsightFacade;
 
-
 		before(async () => {
-
-			sections = await getContentFromArchives("valid1.zip");
-
+			sections = await getContentFromArchives("syabre/valid1.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 			facade = new InsightFacade();
-
 		});
-
 
 		it("should reject removal with  an empty dataset id", async () => {
 			try {
@@ -602,8 +412,6 @@ function testRemoveDataset() {
 			} catch (error: any) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
 		it("should reject with  an invalid dataset id", async () => {
 			try {
@@ -614,8 +422,6 @@ function testRemoveDataset() {
 			} catch (error) {
 				expect(error).to.be.instanceOf(InsightError);
 			}
-
-
 		});
 		it("should remove successfully", async () => {
 			try {
@@ -626,10 +432,7 @@ function testRemoveDataset() {
 			} catch (error) {
 				expect.fail("Should have removed data successfully");
 			}
-
-
 		});
-
 	});
 }
 
@@ -639,29 +442,22 @@ function testListDatasets() {
 		let sections2: string;
 		let sections3: string;
 
-
 		let facade: InsightFacade;
 
-
 		before(async function () {
-
-			sections1 = await getContentFromArchives("valid1.zip");
-			sections2 = await getContentFromArchives("multiple-valid.zip");
-			sections3 = await getContentFromArchives("1.empty-1.valid.zip");
-
+			sections1 = await getContentFromArchives("syabre/valid1.zip");
+			sections2 = await getContentFromArchives("syabre/multiple-valid.zip");
+			sections3 = await getContentFromArchives("syabre/1.empty-1.valid.zip");
 		});
-
 
 		beforeEach(async () => {
 			await clearDisk();
 
 			facade = new InsightFacade();
-
 		});
 
 		it("should list all dataset", async () => {
 			try {
-
 				await facade.addDataset("test1", sections1, InsightDatasetKind.Sections);
 				await facade.addDataset("test2", sections2, InsightDatasetKind.Sections);
 				await facade.addDataset("test3", sections3, InsightDatasetKind.Sections);
@@ -675,134 +471,72 @@ function testListDatasets() {
 			} catch (error: any) {
 				expect.fail("Should not return any error-datasets should have been listed.");
 			}
-
-
 		});
-
 	});
 }
 
-/**
- *
- * Searches for test query JSON files in the path.
- *
- * @param path The path to the sample query JSON files.
- */
-
-function readFileQueries(path: string): ITestQuery[] {
-
-	// Note: This method *must* be synchronous for Mocha
-
-	const fileNames = fs.readdirSync(`test/resources/queries/${path}`);
-
-
-	const allQueries: ITestQuery[] = [];
-
-	for (const fileName of fileNames) {
-
-		const fileQuery = fs.readJSONSync(`test/resources/queries/${path}/${fileName}`);
-
-
-		allQueries.push(fileQuery);
-
-	}
-
-
-	return allQueries;
-
-}
 function testPerformQuery() {
 	describe("PerformQuery", () => {
 		let sections: string;
 		let facade: InsightFacade;
-
 
 		before(async () => {
 			facade = new InsightFacade();
 			sections = await getContentFromArchives("pair.zip");
 
 			await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
-
-
 		});
 
 		describe("PerformQuery-Invalid queries", () => {
-
 			let invalidQueries: ITestQuery[];
 			try {
-
-				invalidQueries = readFileQueries("invalid");
-
-
+				invalidQueries = readFileQueries("syabre/invalid");
 			} catch (e: unknown) {
-
 				expect.fail(`Failed to read one or more test queries. ${e}`);
-
 			}
 
 			invalidQueries.forEach((test: ITestQuery) => {
-
 				it(`${test.title}`, async () => {
 					const RESULT_TOO_LARGE_ERROR: string = "ResultTooLargeError";
 					try {
 						await facade.performQuery(test.input);
 						expect.fail("performQuery should have thrown an error because query is invalid}");
-
 					} catch (error: any) {
 						if (test.errorExpected && test.expected === RESULT_TOO_LARGE_ERROR) {
 							expect(error).to.be.instanceOf(ResultTooLargeError);
 						} else if (test.errorExpected) {
 							expect(error).to.be.instanceOf(InsightError);
 						}
-
 					}
-
 				});
-
 			});
-
-
 		});
 
 		describe("PerformQuery-Valid queries", () => {
 			let validQueries: ITestQuery[];
 			try {
-
-
-				validQueries = readFileQueries("valid");
-
+				validQueries = readFileQueries("syabre/valid");
 			} catch (e: unknown) {
-
 				expect.fail(`Failed to read one or more test queries. ${e}`);
-
 			}
 
 			validQueries.forEach((test: ITestQuery) => {
-
 				it(test.title, async () => {
 					try {
 						const queryResult = await facade.performQuery(test.input);
 						expect(queryResult).to.deep.equal(test.expected);
-
 					} catch (error: any) {
 						expect.fail("performQuery threw unexpected error");
 					}
-
 				});
-
 			});
-
 		});
 	});
-
-
 }
 
-
-describe("InsightFacade Test Suite", () => {
+describe("InsightFacade (syabre)", () => {
 	testAddDataset();
 	testListDatasets();
 	testRemoveDataset();
 	testPerformQuery();
-
 });
