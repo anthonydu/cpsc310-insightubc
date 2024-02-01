@@ -1,0 +1,578 @@
+{
+	"title": "valid__select_all_columns_use_all_keys",
+	"input": {
+		"WHERE": {
+			"OR": [
+				{
+					"AND": [
+						{
+							"GT": {
+								"sections_avg": 90
+							}
+						},
+						{
+							"GT": {
+								"sections_pass": 60
+							}
+						},
+						{
+							"LT": {
+								"sections_fail": 20
+							}
+						},
+						{
+							"LT": {
+								"sections_audit": 20
+							}
+						},
+						{
+							"GT": {
+								"sections_year": 2009
+							}
+						},
+						{
+							"IS": {
+								"sections_instructor": "*"
+							}
+						},
+						{
+							"IS": {
+								"sections_dept": "*e"
+							}
+						},
+						{
+							"IS": {
+								"sections_id": "5*"
+							}
+						},
+						{
+							"IS": {
+								"sections_uuid": "*1"
+							}
+						},
+						{
+							"IS": {
+								"sections_title": "*e*"
+							}
+						}
+					]
+				},
+				{
+					"EQ": {
+						"sections_avg": 95
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"sections_uuid",
+				"sections_id",
+				"sections_instructor",
+				"sections_dept",
+				"sections_title",
+				"sections_avg",
+				"sections_year",
+				"sections_pass",
+				"sections_fail",
+				"sections_audit"
+			],
+			"ORDER": "sections_instructor"
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"sections_uuid": "10582",
+			"sections_id": "501",
+			"sections_instructor": "",
+			"sections_dept": "rhsc",
+			"sections_title": "eval src evidenc",
+			"sections_avg": 95,
+			"sections_year": 2009,
+			"sections_pass": 6,
+			"sections_fail": 0,
+			"sections_audit": 4
+		},
+		{
+			"sections_uuid": "94901",
+			"sections_id": "501",
+			"sections_instructor": "",
+			"sections_dept": "psyc",
+			"sections_title": "health psych",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 8,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "98843",
+			"sections_id": "549",
+			"sections_instructor": "",
+			"sections_dept": "obst",
+			"sections_title": "msc thesis",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 1,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "96196",
+			"sections_id": "424",
+			"sections_instructor": "",
+			"sections_dept": "nurs",
+			"sections_title": "mntl hlth concrn",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 9,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "93964",
+			"sections_id": "553",
+			"sections_instructor": "",
+			"sections_dept": "musc",
+			"sections_title": "ubc singers",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 4,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "28878",
+			"sections_id": "553",
+			"sections_instructor": "",
+			"sections_dept": "musc",
+			"sections_title": "ubc singers",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 7,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "19491",
+			"sections_id": "553",
+			"sections_instructor": "",
+			"sections_dept": "musc",
+			"sections_title": "ubc singers",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 4,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "2676",
+			"sections_id": "599",
+			"sections_instructor": "",
+			"sections_dept": "mtrl",
+			"sections_title": "masters thesis",
+			"sections_avg": 95,
+			"sections_year": 2011,
+			"sections_pass": 1,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "49774",
+			"sections_id": "564",
+			"sections_instructor": "",
+			"sections_dept": "mtrl",
+			"sections_title": "hydrmtllgcl rctr",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 6,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "29972",
+			"sections_id": "532",
+			"sections_instructor": "",
+			"sections_dept": "math",
+			"sections_title": "algb geometry i",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 6,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "29971",
+			"sections_id": "532",
+			"sections_instructor": "",
+			"sections_dept": "math",
+			"sections_title": "algb geometry i",
+			"sections_avg": 95,
+			"sections_year": 2008,
+			"sections_pass": 6,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "86831",
+			"sections_id": "500",
+			"sections_instructor": "",
+			"sections_dept": "kin",
+			"sections_title": "spec tpcs kin",
+			"sections_avg": 95,
+			"sections_year": 2014,
+			"sections_pass": 4,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "59530",
+			"sections_id": "500",
+			"sections_instructor": "",
+			"sections_dept": "kin",
+			"sections_title": "spec tpcs kin",
+			"sections_avg": 95,
+			"sections_year": 2013,
+			"sections_pass": 7,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "72706",
+			"sections_id": "499",
+			"sections_instructor": "",
+			"sections_dept": "kin",
+			"sections_title": "kin project",
+			"sections_avg": 95,
+			"sections_year": 2015,
+			"sections_pass": 5,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "86975",
+			"sections_id": "682",
+			"sections_instructor": "",
+			"sections_dept": "epse",
+			"sections_title": "mult des anal rs",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 9,
+			"sections_fail": 0,
+			"sections_audit": 9
+		},
+		{
+			"sections_uuid": "16691",
+			"sections_id": "473",
+			"sections_instructor": "",
+			"sections_dept": "edcp",
+			"sections_title": "ict educ ethics",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 19,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "10017",
+			"sections_id": "516",
+			"sections_instructor": "",
+			"sections_dept": "econ",
+			"sections_title": "spc tpcs macroec",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 3,
+			"sections_fail": 0,
+			"sections_audit": 2
+		},
+		{
+			"sections_uuid": "81354",
+			"sections_id": "599",
+			"sections_instructor": "",
+			"sections_dept": "crwr",
+			"sections_title": "thesis",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 3,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "71171",
+			"sections_id": "599",
+			"sections_instructor": "",
+			"sections_dept": "crwr",
+			"sections_title": "thesis",
+			"sections_avg": 95,
+			"sections_year": 2012,
+			"sections_pass": 3,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "1386",
+			"sections_id": "589",
+			"sections_instructor": "",
+			"sections_dept": "cpsc",
+			"sections_title": "m.sc major essay",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 1,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "1385",
+			"sections_id": "589",
+			"sections_instructor": "",
+			"sections_dept": "cpsc",
+			"sections_title": "m.sc major essay",
+			"sections_avg": 95,
+			"sections_year": 2014,
+			"sections_pass": 1,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "28350",
+			"sections_id": "535",
+			"sections_instructor": "",
+			"sections_dept": "cnps",
+			"sections_title": "adlt psychpathlg",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 4,
+			"sections_fail": 0,
+			"sections_audit": 1
+		},
+		{
+			"sections_uuid": "43502",
+			"sections_id": "597",
+			"sections_instructor": "",
+			"sections_dept": "bmeg",
+			"sections_title": "master eng proj",
+			"sections_avg": 95,
+			"sections_year": 1900,
+			"sections_pass": 2,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "75158",
+			"sections_id": "599",
+			"sections_instructor": "acheson, alison",
+			"sections_dept": "crwr",
+			"sections_title": "thesis",
+			"sections_avg": 95,
+			"sections_year": 2015,
+			"sections_pass": 1,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "88881",
+			"sections_id": "570",
+			"sections_instructor": "clark, natalie",
+			"sections_dept": "sowk",
+			"sections_title": "directed study",
+			"sections_avg": 95,
+			"sections_year": 2015,
+			"sections_pass": 4,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "94900",
+			"sections_id": "501",
+			"sections_instructor": "de longis, anita",
+			"sections_dept": "psyc",
+			"sections_title": "health psych",
+			"sections_avg": 95,
+			"sections_year": 2010,
+			"sections_pass": 8,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "49773",
+			"sections_id": "564",
+			"sections_instructor": "dixon, david",
+			"sections_dept": "mtrl",
+			"sections_title": "hydrmtllgcl rctr",
+			"sections_avg": 95,
+			"sections_year": 2010,
+			"sections_pass": 6,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "43501",
+			"sections_id": "597",
+			"sections_instructor": "dumont, guy a",
+			"sections_dept": "bmeg",
+			"sections_title": "master eng proj",
+			"sections_avg": 95,
+			"sections_year": 2014,
+			"sections_pass": 2,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "10016",
+			"sections_id": "516",
+			"sections_instructor": "gallipoli, giovanni",
+			"sections_dept": "econ",
+			"sections_title": "spc tpcs macroec",
+			"sections_avg": 95,
+			"sections_year": 2016,
+			"sections_pass": 3,
+			"sections_fail": 0,
+			"sections_audit": 2
+		},
+		{
+			"sections_uuid": "92881",
+			"sections_id": "599",
+			"sections_instructor": "galloway, steve",
+			"sections_dept": "crwr",
+			"sections_title": "thesis",
+			"sections_avg": 95,
+			"sections_year": 2014,
+			"sections_pass": 2,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "26257",
+			"sections_id": "599",
+			"sections_instructor": "graefe, sara",
+			"sections_dept": "crwr",
+			"sections_title": "thesis",
+			"sections_avg": 95,
+			"sections_year": 2014,
+			"sections_pass": 2,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "93963",
+			"sections_id": "553",
+			"sections_instructor": "langager, graeme",
+			"sections_dept": "musc",
+			"sections_title": "ubc singers",
+			"sections_avg": 95,
+			"sections_year": 2011,
+			"sections_pass": 4,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "28877",
+			"sections_id": "553",
+			"sections_instructor": "langager, graeme",
+			"sections_dept": "musc",
+			"sections_title": "ubc singers",
+			"sections_avg": 95,
+			"sections_year": 2013,
+			"sections_pass": 7,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "19490",
+			"sections_id": "553",
+			"sections_instructor": "langager, graeme",
+			"sections_dept": "musc",
+			"sections_title": "ubc singers",
+			"sections_avg": 95,
+			"sections_year": 2010,
+			"sections_pass": 4,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "46407",
+			"sections_id": "599",
+			"sections_instructor": "medved, maureen",
+			"sections_dept": "crwr",
+			"sections_title": "thesis",
+			"sections_avg": 95,
+			"sections_year": 2013,
+			"sections_pass": 1,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "16690",
+			"sections_id": "473",
+			"sections_instructor": "petrina, stephen",
+			"sections_dept": "edcp",
+			"sections_title": "ict educ ethics",
+			"sections_avg": 95,
+			"sections_year": 2013,
+			"sections_pass": 19,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "96195",
+			"sections_id": "424",
+			"sections_instructor": "phillips, craig",
+			"sections_dept": "nurs",
+			"sections_title": "mntl hlth concrn",
+			"sections_avg": 95,
+			"sections_year": 2010,
+			"sections_pass": 9,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "28349",
+			"sections_id": "535",
+			"sections_instructor": "schultz, izabela",
+			"sections_dept": "cnps",
+			"sections_title": "adlt psychpathlg",
+			"sections_avg": 95,
+			"sections_year": 2016,
+			"sections_pass": 4,
+			"sections_fail": 0,
+			"sections_audit": 1
+		},
+		{
+			"sections_uuid": "46406",
+			"sections_id": "599",
+			"sections_instructor": "svendsen, linda jane",
+			"sections_dept": "crwr",
+			"sections_title": "thesis",
+			"sections_avg": 95,
+			"sections_year": 2013,
+			"sections_pass": 1,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "76362",
+			"sections_id": "606",
+			"sections_instructor": "vadeboncoeur, jennifer",
+			"sections_dept": "epse",
+			"sections_title": "coll&uni teachng",
+			"sections_avg": 95,
+			"sections_year": 2009,
+			"sections_pass": 7,
+			"sections_fail": 0,
+			"sections_audit": 0
+		},
+		{
+			"sections_uuid": "86974",
+			"sections_id": "682",
+			"sections_instructor": "zumbo, bruno",
+			"sections_dept": "epse",
+			"sections_title": "mult des anal rs",
+			"sections_avg": 95,
+			"sections_year": 2007,
+			"sections_pass": 9,
+			"sections_fail": 0,
+			"sections_audit": 9
+		}
+	]
+}

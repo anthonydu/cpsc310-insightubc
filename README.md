@@ -1,4 +1,4 @@
-# CPSC 310 Project Repository
+# CPSC 310 Project Repository 
 
 This repository contains starter code for the class project.
 Please keep your repository private.
@@ -36,7 +36,7 @@ In the project folder:
 
 If you are curious, some of these commands are actually shortcuts defined in [package.json -> scripts](./package.json).
 
-## Running and testing from an IDE
+## Running and testing from an IDE 
 
 IntelliJ Ultimate should be automatically configured the first time you open the project (IntelliJ Ultimate is a free download through the [JetBrains student program](https://www.jetbrains.com/community/education/#students/)).
 
