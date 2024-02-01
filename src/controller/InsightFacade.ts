@@ -1,8 +1,10 @@
 /* eslint-disable max-lines */
 import JSZip from "jszip";
+import * as fs from "fs-extra";
 // eslint-disable-next-line max-len
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, ResultTooLargeError} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, ResultTooLargeError, PersistDataset,NotFoundError} from "./IInsightFacade";
 import {QueryManager} from "./queryManager";
+import {Section} from "./queryTypes";
 
 
 /**
@@ -10,71 +12,13 @@ import {QueryManager} from "./queryManager";
  * Method documentation is in IInsightFacade
  *
  */
+const persistFile = "data/datasets.json";
 class DataManager {
 	private data: string;
 	constructor() {
 		this.data = "";
 	}
-
-	public isIDValid(id: string): boolean {
-		const trimmedId = id.trim();
-		const emptyString = "";
-		const underscore = "_";
-
-		return trimmedId === emptyString || trimmedId.includes(underscore);
-	}
-
-	// check if any of the sections is missing a query key
-	public isSectionValid(section: {[x: string]: undefined;}): boolean {
-		const queryKeys: string[] = ["id", "Course", "Title", "Professor", "Subject",
-			"Year", "Avg", "Pass", "Fail", "Audit"];
-		for (const key of queryKeys) {
-			if (section[key] === undefined) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	public isCourseValid(this: any, course: string): boolean {
-		try {
-			const data = JSON.parse(course); // any JSOn error will be caught within catch
-			const sections = data.result;
-
-			// a course is valid if it has no invalid section
-			// therefore, invalidate course if any such section is found :)
-			// waiting on piazza confirmation to see if this interpretation is correct
-			for (const section of sections) {
-				if (!this.isSectionValid(section)) {
-					return false;
-				}
-			}
-			return true;
-		} catch (error) {
-			return false;
-		}
-	}
-
-	public async isDataSetValid(content: string): Promise<boolean> {
-
-		return false;
-	}
-
-	public async getCoursesJSONData(content: string) {
-		try {
-			const zipObj = new JSZip();
-			const readSections = await zipObj.loadAsync(content);
-
-			return readSections;
-		} catch (error: any) {
-			throw new Error(error.message);
-		}
-
-
-	}
 }
-
 export default class InsightFacade implements IInsightFacade {
 	private static async readPersist() {
 		try {
