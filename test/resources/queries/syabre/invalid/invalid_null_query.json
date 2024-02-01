@@ -1,0 +1,7 @@
+{
+	"title": "invalid_null_query",
+	"input": null
+	,
+	"errorExpected": true,
+	"expected": "InsightError"
+}

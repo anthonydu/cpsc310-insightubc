@@ -1,0 +1,80 @@
+{
+	"title": "valid_IS_skey",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"sections_fail": 200
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"sections_dept",
+				"sections_avg"
+			],
+			"ORDER": "sections_avg"
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"sections_dept": "chem",
+			"sections_avg": 63.33
+		},
+		{
+			"sections_dept": "math",
+			"sections_avg": 64.55
+		},
+		{
+			"sections_dept": "biol",
+			"sections_avg": 64.73
+		},
+		{
+			"sections_dept": "chem",
+			"sections_avg": 64.94
+		},
+		{
+			"sections_dept": "math",
+			"sections_avg": 65.38
+		},
+		{
+			"sections_dept": "math",
+			"sections_avg": 65.99
+		},
+		{
+			"sections_dept": "econ",
+			"sections_avg": 67.24
+		},
+		{
+			"sections_dept": "chem",
+			"sections_avg": 67.42
+		},
+		{
+			"sections_dept": "chem",
+			"sections_avg": 68.2
+		},
+		{
+			"sections_dept": "chem",
+			"sections_avg": 68.72
+		},
+		{
+			"sections_dept": "chem",
+			"sections_avg": 68.77
+		},
+		{
+			"sections_dept": "biol",
+			"sections_avg": 68.77
+		},
+		{
+			"sections_dept": "chem",
+			"sections_avg": 69.3
+		},
+		{
+			"sections_dept": "chem",
+			"sections_avg": 69.41
+		},
+		{
+			"sections_dept": "chem",
+			"sections_avg": 70.22
+		}
+	]
+}

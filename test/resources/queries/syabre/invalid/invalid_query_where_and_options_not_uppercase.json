@@ -1,0 +1,62 @@
+{
+	"title": "invalid_query_where_and_options_not_uppercase",
+	"input": {
+		"where": {
+			"OR": [
+				{
+					"AND": [
+						{
+							"NOT": {
+								"GT": {
+									"sections_avg": 90
+								}
+							}
+						},
+						{
+							"NOT": {
+								"LT": {
+									"sections_year": 2010
+								}
+							}
+						},
+						{
+							"EQ": {
+								"sections_pass": 50
+							}
+						},
+						{
+							"IS": {
+								"sections_dept": "adhe"
+							}
+						}
+					]
+				},
+				{
+					"NOT": {
+						"LT": {
+							"sections_avg": 95
+						}
+					}
+				},
+				{
+					"IS": {
+						"sections_id": 200
+					}
+				}
+			]
+		},
+		"options": {
+			"COLUMNS": [
+				"sections_dept",
+				"sections_year",
+				"sections_avg",
+				"sections_title",
+				"sections_instructor",
+				"sections_id"
+			],
+			"ORDER": "sections_instructor"
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}

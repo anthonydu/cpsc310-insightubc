@@ -1,0 +1,45 @@
+{
+	"title": "invalid_column_name_has_leading_space",
+	"input": {
+		"WHERE": {
+			"OR": [
+				{
+					"AND": [
+						{
+							"GT": {
+								"sections_avg": 90
+							}
+						},
+						{
+							"IS": {
+								"sections_dept": "1"
+							}
+						}
+					]
+				},
+				{
+					"EQ": {
+						"sections_avg": 95
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"sections_uuid",
+				"sections_id",
+				"sections_instructor ",
+				"sections_dept",
+				"sections_title",
+				"sections_avg",
+				"sections_year",
+				"sections_pass",
+				"sections_fail",
+				"sections_audit"
+			],
+			"ORDER": "sections_instructor"
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}
