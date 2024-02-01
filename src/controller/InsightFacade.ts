@@ -17,6 +17,7 @@ const persistFile = "./data/datasets.json";
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
  */
+
 export default class InsightFacade implements IInsightFacade {
 	private static async readPersist() {
 		try {
@@ -108,3 +109,7 @@ export default class InsightFacade implements IInsightFacade {
 		}));
 	}
 }
+function isSectionValid(section: any) {
+	throw new Error("Function not implemented.");
+}
+

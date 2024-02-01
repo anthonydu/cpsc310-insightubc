@@ -1,0 +1,26 @@
+{
+	"title": "invalid_AND_must_not_be_empty",
+	"input": {
+		"WHERE": {
+			"OR": [
+				{
+					"AND": []
+				},
+				{
+					"EQ": {
+						"sections_avg": 95
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"sections_dept",
+				"sections_id",
+				"sections_avg"
+			]
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}

@@ -1,0 +1,59 @@
+{
+	"title": "valid_deeply_nested_NOT_wildcards",
+	"input": {
+		"WHERE": {
+			"NOT": {
+				"NOT": {
+					"NOT": {
+						"NOT": {
+							"IS": {
+								"sections_title": "*ala*"
+							}
+						}
+					}
+				}
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"sections_dept",
+				"sections_fail",
+				"sections_avg"
+			],
+			"ORDER": "sections_avg"
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"sections_dept": "astr",
+			"sections_fail": 0,
+			"sections_avg": 76
+		},
+		{
+			"sections_dept": "astr",
+			"sections_fail": 0,
+			"sections_avg": 76
+		},
+		{
+			"sections_dept": "astr",
+			"sections_fail": 0,
+			"sections_avg": 80.1
+		},
+		{
+			"sections_dept": "astr",
+			"sections_fail": 0,
+			"sections_avg": 80.1
+		},
+		{
+			"sections_dept": "astr",
+			"sections_fail": 0,
+			"sections_avg": 82.67
+		},
+		{
+			"sections_dept": "astr",
+			"sections_fail": 0,
+			"sections_avg": 82.67
+		}
+	]
+}
