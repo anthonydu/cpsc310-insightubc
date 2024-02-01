@@ -7,7 +7,7 @@ import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightResult} from 
  */
 export default class InsightFacade implements IInsightFacade {
 	constructor() {
-		console.log("InsightFacadeImpl::init()");
+		// console.log("InsightFacadeImpl::init()");
 	}
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {

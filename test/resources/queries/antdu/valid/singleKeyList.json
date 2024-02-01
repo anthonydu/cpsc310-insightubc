@@ -1,0 +1,137 @@
+{
+  "title": "single element key list",
+  "input": {
+    "WHERE": {
+      "AND": [
+        {
+          "IS": {
+            "sections_dept": "cpsc"
+          }
+        },
+        {
+          "NOT": {
+            "IS": {
+              "sections_id": "*3*"
+            }
+          }
+        },
+        {
+          "OR": [
+            {
+              "LT": {
+                "sections_avg": 70
+              }
+            },
+            {
+              "GT": {
+                "sections_avg": 90
+              }
+            },
+            {
+              "EQ": {
+                "sections_avg": 80
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": ["sections_uuid"],
+      "ORDER": "sections_uuid"
+    }
+  },
+  "errorExpected": false,
+  "expected": [
+    { "sections_uuid": "1255" },
+    { "sections_uuid": "1282" },
+    { "sections_uuid": "1283" },
+    { "sections_uuid": "1354" },
+    { "sections_uuid": "1355" },
+    { "sections_uuid": "1376" },
+    { "sections_uuid": "1377" },
+    { "sections_uuid": "1385" },
+    { "sections_uuid": "1386" },
+    { "sections_uuid": "46737" },
+    { "sections_uuid": "46738" },
+    { "sections_uuid": "46741" },
+    { "sections_uuid": "46742" },
+    { "sections_uuid": "46756" },
+    { "sections_uuid": "46757" },
+    { "sections_uuid": "46762" },
+    { "sections_uuid": "46763" },
+    { "sections_uuid": "46810" },
+    { "sections_uuid": "46811" },
+    { "sections_uuid": "49854" },
+    { "sections_uuid": "49874" },
+    { "sections_uuid": "49875" },
+    { "sections_uuid": "49881" },
+    { "sections_uuid": "49882" },
+    { "sections_uuid": "49930" },
+    { "sections_uuid": "49931" },
+    { "sections_uuid": "49936" },
+    { "sections_uuid": "49937" },
+    { "sections_uuid": "49956" },
+    { "sections_uuid": "49957" },
+    { "sections_uuid": "49958" },
+    { "sections_uuid": "49959" },
+    { "sections_uuid": "49966" },
+    { "sections_uuid": "49967" },
+    { "sections_uuid": "51976" },
+    { "sections_uuid": "51978" },
+    { "sections_uuid": "51990" },
+    { "sections_uuid": "52041" },
+    { "sections_uuid": "52042" },
+    { "sections_uuid": "52049" },
+    { "sections_uuid": "52050" },
+    { "sections_uuid": "52051" },
+    { "sections_uuid": "52052" },
+    { "sections_uuid": "52065" },
+    { "sections_uuid": "52067" },
+    { "sections_uuid": "61085" },
+    { "sections_uuid": "61095" },
+    { "sections_uuid": "61152" },
+    { "sections_uuid": "61179" },
+    { "sections_uuid": "61180" },
+    { "sections_uuid": "61186" },
+    { "sections_uuid": "61187" },
+    { "sections_uuid": "62347" },
+    { "sections_uuid": "62446" },
+    { "sections_uuid": "62447" },
+    { "sections_uuid": "62468" },
+    { "sections_uuid": "62469" },
+    { "sections_uuid": "62474" },
+    { "sections_uuid": "62475" },
+    { "sections_uuid": "72332" },
+    { "sections_uuid": "72345" },
+    { "sections_uuid": "72396" },
+    { "sections_uuid": "72397" },
+    { "sections_uuid": "72402" },
+    { "sections_uuid": "72403" },
+    { "sections_uuid": "72424" },
+    { "sections_uuid": "72425" },
+    { "sections_uuid": "72428" },
+    { "sections_uuid": "72429" },
+    { "sections_uuid": "75595" },
+    { "sections_uuid": "75596" },
+    { "sections_uuid": "83393" },
+    { "sections_uuid": "83406" },
+    { "sections_uuid": "83413" },
+    { "sections_uuid": "83420" },
+    { "sections_uuid": "83421" },
+    { "sections_uuid": "83491" },
+    { "sections_uuid": "83492" },
+    { "sections_uuid": "83495" },
+    { "sections_uuid": "83496" },
+    { "sections_uuid": "83519" },
+    { "sections_uuid": "83520" },
+    { "sections_uuid": "90513" },
+    { "sections_uuid": "90527" },
+    { "sections_uuid": "90570" },
+    { "sections_uuid": "90571" },
+    { "sections_uuid": "90603" },
+    { "sections_uuid": "90604" },
+    { "sections_uuid": "90629" },
+    { "sections_uuid": "90630" }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "title": "dataset not added",
+  "input": {
+    "WHERE": {},
+    "OPTIONS": {
+      "COLUMNS": ["nope_uuid"]
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}

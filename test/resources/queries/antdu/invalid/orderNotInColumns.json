@@ -1,0 +1,16 @@
+{
+  "title": "order not in columns",
+  "input": {
+    "WHERE": {
+      "IS": {
+        "sections_dept": "cpsc"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": ["sections_uuid"],
+      "ORDER": "sections_year"
+    }
+  },
+  "errorExpected": true,
+  "expected": "InsightError"
+}
