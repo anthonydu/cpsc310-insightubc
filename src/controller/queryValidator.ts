@@ -26,7 +26,7 @@ function isValidJSON(jsonString: string,errors: string[]): boolean {
 }
 
 
-export function validateQuery(query: QUERY,errors: string[]): boolean{
+export function validateQuery(query: QUERY,errors: string[],ids: string[]): boolean{
 	let error: string;
 	const parsedQuery: QUERY = query;
 	let response: boolean;
@@ -38,11 +38,11 @@ export function validateQuery(query: QUERY,errors: string[]): boolean{
 	}
 
 	// add logic to make sure that an error is return is a dataset does not exist
-	response = validateWHERE(parsedQuery.WHERE,errors);
+	response = validateWHERE(parsedQuery.WHERE,errors,ids);
 	if(!response){
 		return  response;
 	}
-	response = validateOPTIONS(parsedQuery.OPTIONS,errors);
+	response = validateOPTIONS(parsedQuery.OPTIONS,errors,ids);
 	if(!response){
 		return response;
 	}
@@ -55,13 +55,13 @@ export function validateQuery(query: QUERY,errors: string[]): boolean{
 	return  true;
 }
 
-function isValidMComparator(mcomp: MCOMPARATOR,errors: string[]): mcomp is MCOMPARATOR {
+function isValidMComparator(mcomp: MCOMPARATOR,errors: string[],ids: string[]): mcomp is MCOMPARATOR {
 	const res: boolean = typeof  mcomp === "string" && ["LT", "GT", "EQ"].includes(mcomp);
 	errors.push(`${mcomp as string} is not one of ["LT", "GT", "EQ"]`);
 	return  false;
 }
 
-function isValidMComparison(mcomparison: MCOMPARISON,errors: string[]){
+function isValidMComparison(mcomparison: MCOMPARISON,errors: string[],ids: string[]){
 	let error: string;
 	if(!mcomparison || typeof mcomparison !== "object"){
 		error = "MCOMPARISON should be an object";
@@ -76,7 +76,7 @@ function isValidMComparison(mcomparison: MCOMPARISON,errors: string[]){
 		return false;
 
 	}
-	if(!isValidMComparator(keys[0] as MCOMPARATOR,errors)){
+	if(!isValidMComparator(keys[0] as MCOMPARATOR,errors,ids)){
 		error = "Invalid MCOMPARATOR should be one of LT, GT, EQ";
 		errors.push(error);
 		return false;
@@ -89,10 +89,10 @@ function isValidMComparison(mcomparison: MCOMPARISON,errors: string[]){
 	}
 	const mkey = Object.keys(compBody[0])[0];
 	const mkeyValue =  Object.values(compBody[0])[0];
-	return validateMkey(mkey as MKEY,errors) && (typeof mkeyValue === "number");
+	return validateMkey(mkey as MKEY,errors,ids) && (typeof mkeyValue === "number");
 }
 
-function isValidSComparison(scomp: SCOMPARISON,errors: string []): boolean{
+function isValidSComparison(scomp: SCOMPARISON,errors: string [],ids: string[]): boolean{
 	let error: string;
 	if(!scomp || typeof scomp !== "object" ){
 		error = "Invalid SCOMPARISON value, not an object";
@@ -135,7 +135,7 @@ function isValidSComparison(scomp: SCOMPARISON,errors: string []): boolean{
 		const skey = Object.values(ISBody)[0];
 		const inputString = Object.values(ISBody)[0];
 
-		return validateInputString(inputString,errors) && validateSkey(skey as SKEY,errors);
+		return validateInputString(inputString,errors) && validateSkey(skey as SKEY,errors,ids);
 	}
 
 }
@@ -152,7 +152,7 @@ function isValidLogic(logic: LOGIC,errors: string[]): logic is LOGIC{
 	return true;
 }
 
-function isValidLogiComparison(logicComp: LOGICCOMPARISON,errors: string[]): logicComp is LOGICCOMPARISON{
+function isValidLogiComparison(logicComp: LOGICCOMPARISON,errors: string[],ids: string[]): logicComp is LOGICCOMPARISON{
 	let error: string;
 	if(!logicComp || typeof logicComp !== "object"){
 		error = `${logicComp} is not an object`;
@@ -165,10 +165,10 @@ function isValidLogiComparison(logicComp: LOGICCOMPARISON,errors: string[]): log
 		error = `${logicComp} is invalid`;
 		return false;
 	}
-	return  isValidLogic(keys[0] as LOGIC,errors) && validateFILTERs(values[0],errors);
+	return  isValidLogic(keys[0] as LOGIC,errors) && validateFILTERs(values[0],errors,ids);
 }
 
-function validateNegation(negation: NEGATION,errors: string[]): negation is NEGATION{
+function validateNegation(negation: NEGATION,errors: string[],ids: string[]): negation is NEGATION{
 	let error: string;
 	if(!negation || !negation.NOT){
 		error = `${negation} is invalid`;
@@ -180,7 +180,7 @@ function validateNegation(negation: NEGATION,errors: string[]): negation is NEGA
 		errors.push(error);
 		return false;
 	}
-	return validateFILTER(negation.NOT,errors);
+	return validateFILTER(negation.NOT,errors,ids);
 }
 
 export function getFilterType(filter: FILTER): string{
@@ -203,7 +203,7 @@ export function getFilterType(filter: FILTER): string{
 	}
 }
 
-function validateWHERE(where: any,errors: string[]): boolean{
+function validateWHERE(where: any,errors: string[],ids: string[]): boolean{
 	let error: string;
 	if(typeof where !== "object"){
 		error = "WHERE expects an object type";
@@ -212,13 +212,13 @@ function validateWHERE(where: any,errors: string[]): boolean{
 	}else if(where === {} as Record<never,never>){
 		return true;
 	}else{
-		return validateFILTER( where as FILTER,errors);
+		return validateFILTER( where as FILTER,errors,ids);
 	}
 }
 
-function validateFILTER(filter: FILTER,errors: string[]): boolean{
+function validateFILTER(filter: FILTER,errors: string[],ids: string[]): boolean{
 	let error: string;
-	type ValidatorFunction = (filter: any,errors: string[]) => boolean;
+	type ValidatorFunction = (filter: any,errors: string[],ids: string[]) => boolean;
 	const validatorsMap: Record<string,ValidatorFunction> = {
 		NEGATION: validateNegation,
 		SCOMPARISON: isValidSComparison,
@@ -243,14 +243,14 @@ function validateFILTER(filter: FILTER,errors: string[]): boolean{
 			return false;
 		}
 		const validator: ValidatorFunction = validatorsMap[filterType];
-		return validator(filter,errors) ;
+		return validator(filter,errors,ids) ;
 	}
 
 }
 
-function validateFILTERs(filters: FILTER[],errors: string[]): boolean{
+function validateFILTERs(filters: FILTER[],errors: string[],ids: string[]): boolean{
 	for(const filter of filters){
-		if(!validateFILTER(filter,errors)){
+		if(!validateFILTER(filter,errors,ids)){
 			return false;
 		}
 	}
@@ -258,10 +258,10 @@ function validateFILTERs(filters: FILTER[],errors: string[]): boolean{
 }
 
 
-export function validateIDString(str: IDSTRING,errors: string[]): boolean {
+export function validateIDString(str: IDSTRING,errors: string[],ids: string[]): boolean {
 	let error: string;
 	const pattern = new RegExp("[^_]+");
-	// ids.add(str);
+	ids.push(str);
 	if(!pattern.test(str)){
 		error = `invalid idstring ${str}`;
 		errors.push(error);

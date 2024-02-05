@@ -1,8 +1,14 @@
 /* eslint-disable max-lines */
 import JSZip from "jszip";
 import * as fs from "fs-extra";
-// eslint-disable-next-line max-len
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, ResultTooLargeError, PersistDataset,NotFoundError} from "./IInsightFacade";
+
+import {IInsightFacade,
+	InsightDataset,
+	InsightDatasetKind,
+	InsightError, InsightResult,
+	ResultTooLargeError,
+	PersistDataset,
+	NotFoundError} from "./IInsightFacade";
 import {QueryManager} from "./queryManager";
 import {Section} from "./queryTypes";
 
@@ -13,12 +19,7 @@ import {Section} from "./queryTypes";
  *
  */
 const persistFile = "data/datasets.json";
-class DataManager {
-	private data: string;
-	constructor() {
-		this.data = "";
-	}
-}
+
 export default class InsightFacade implements IInsightFacade {
 	private static async readPersist() {
 		try {
@@ -99,35 +100,7 @@ export default class InsightFacade implements IInsightFacade {
 
 	public async performQuery(query: unknown): Promise<InsightResult[]> {
 		const queryManager: QueryManager = new QueryManager(query);
-		const maxLength: number = 5000;
-		const ids = queryManager.getIds();
-		const datasets = await this.listDatasets();
-		const result = await queryManager.execute();
-
-		return new Promise((resolve, reject) =>{
-
-			let match: string = "";
-			for(const dset of datasets){
-				if(dset.id === ids[0]){
-					match = dset.id;
-
-				}
-			}
-			if(match === ""){
-				return reject(new InsightError("Provided id does not have an associated dataset"));
-			}
-
-			const validated = queryManager.validate();
-			if(validated){
-				if(result.length > maxLength){
-					return reject(new ResultTooLargeError("Result size exceeds the maximum allowed threshold"));
-				}
-				return resolve(result);
-			}
-			const errors: string[] = queryManager.getErrors();
-			return reject(new InsightError(errors[0]));
-
-		});
+		return queryManager.execute();
 
 	}
 

@@ -12,7 +12,7 @@ import {// QUERY,
 } from "./queryTypes";
 import {validateIDString} from "./queryValidator";
 
-export function validateOPTIONS(options: OPTIONS,errors: string[]): options is OPTIONS{
+export function validateOPTIONS(options: OPTIONS,errors: string[],ids: string[]): options is OPTIONS{
 	let error: string;
 	if(!options || typeof options !== "object"){
 		error = "Invalid type for OPTIONS, expected an object";
@@ -45,11 +45,11 @@ export function validateOPTIONS(options: OPTIONS,errors: string[]): options is O
 		const sfields: string[] = ["dept","id" ,"instructor" ,"title" , "uuid"];
 
 		if(mkfields.includes(parts[1])){
-			return validateMkey(column as MKEY,errors);
+			return validateMkey(column as MKEY,errors,ids);
 		}
 
 		if(sfields.includes(parts[1])){
-			return validateSkey(column as SKEY,errors);
+			return validateSkey(column as SKEY,errors,ids);
 		}
 
 	}
@@ -87,7 +87,7 @@ export function validateMfield(mfield: MFIELD,errors: string[]): mfield is MFIEL
 }
 
 // export type SKEY = `"${IDSTRING}_${SFIELD}"`;
-export function validateSkey(skey: SKEY,errors: string[]): skey is SKEY {
+export function validateSkey(skey: SKEY,errors: string[],ids: string[]): skey is SKEY {
 	let error: string;
 	const delimiter = "_";
 	const parts = skey.split(delimiter);
@@ -97,11 +97,11 @@ export function validateSkey(skey: SKEY,errors: string[]): skey is SKEY {
 		errors.push(error);
 		return false;
 	}
-	return validateIDString(parts[0] as IDSTRING,errors) && validateSfield(parts[1] as SFIELD,errors);
+	return validateIDString(parts[0] as IDSTRING,errors,ids) && validateSfield(parts[1] as SFIELD,errors);
 }
 
 // export type MKEY = `"${IDSTRING}_${MFIELD}"`;
-export function validateMkey(mkey: MKEY,errors: string[]): boolean {
+export function validateMkey(mkey: MKEY,errors: string[],ids: string[]): boolean {
 	const delimiter = "_";
 	const parts = mkey.split(delimiter);
 	const requiredLength: number = 2;
@@ -111,7 +111,7 @@ export function validateMkey(mkey: MKEY,errors: string[]): boolean {
 		errors.push(error);
 		return false;
 	}
-	return validateIDString(parts[0],errors) && validateMfield(parts[1] as MFIELD,errors);
+	return validateIDString(parts[0],errors,ids) && validateMfield(parts[1] as MFIELD,errors);
 }
 
 

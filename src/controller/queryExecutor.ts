@@ -58,7 +58,7 @@ function LT(mcomp: MCOMPARISON, section: Section): boolean {
 function NOT(negation: NEGATION,section: Section): boolean {
 	const filter: FILTER = negation.NOT;
 
-	return FILTER(filter,section);
+	return FILTER_DATA(filter,section);
 }
 
 function ORDER(order: unknown): boolean{
@@ -68,23 +68,22 @@ function ORDER(order: unknown): boolean{
 function AND(logicComp: LOGICCOMPARISON,section: Section): boolean{
 	const and = logicComp.AND;
 	if (and) {
-		return and.every((condition) => FILTER(condition, section));
+		return and.every((condition) => FILTER_DATA(condition, section));
 	}
 	return false;
 
-	return false;
 }
 
 function OR(logicComp: LOGICCOMPARISON,section: Section): boolean{
 	const or = logicComp.OR;
 	if (or) {
-		return or.some((condition) => FILTER(condition, section));
+		return or.some((condition) => FILTER_DATA(condition, section));
 	}
 	return false;
 
 }
 
-function FILTER(filter: FILTER,section: Section): boolean{
+export function FILTER_DATA(filter: FILTER,section: Section): boolean{
 	const mcomp = "MCOMPARISON";
 	const scomp = "SCOMPARISON";
 	const logic = "LOGICCOMPARISON";
