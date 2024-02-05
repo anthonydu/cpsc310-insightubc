@@ -8,16 +8,18 @@ import {QUERY,
 	SCOMPARISON,
 	SKEY, FILTER,
 	IDSTRING,
-	SFIELD,
-	MFIELD,
+	// SFIELD,
+	// MFIELD,
 	LOGICCOMPARISON,
 	LOGIC
 } from "./queryTypes";
 
 function isValidJSON(jsonString: string,errors: string[]): boolean {
 
+
 	try {
-		JSON.parse(jsonString);
+		JSON.parse(JSON.stringify(jsonString));
+
 		return true;
 	} catch (error) {
 		errors.push("Invalid JSON");
@@ -30,6 +32,9 @@ export function validateQuery(query: QUERY,errors: string[],ids: string[]): bool
 	let error: string;
 	const parsedQuery: QUERY = query;
 	let response: boolean;
+	if(!query){
+		return false;
+	}
 	response = isValidJSON(query as unknown as string,errors);
 
 	if(!response){
@@ -46,19 +51,13 @@ export function validateQuery(query: QUERY,errors: string[],ids: string[]): bool
 	if(!response){
 		return response;
 	}
-	// logic to validate if a query references two different dataset ids
-	// if(ids.size !== 1){
-	// 	error = "Multiple data sets referenced";
-	// 	errors.push(error);
-	// 	return false;
-	// }
+
 	return  true;
 }
 
 function isValidMComparator(mcomp: MCOMPARATOR,errors: string[],ids: string[]): mcomp is MCOMPARATOR {
-	const res: boolean = typeof  mcomp === "string" && ["LT", "GT", "EQ"].includes(mcomp);
-	errors.push(`${mcomp as string} is not one of ["LT", "GT", "EQ"]`);
-	return  false;
+	const possibleValues = ["LT", "GT", "EQ"];
+	return possibleValues.includes(mcomp as string);
 }
 
 function isValidMComparison(mcomparison: MCOMPARISON,errors: string[],ids: string[]){
@@ -70,11 +69,18 @@ function isValidMComparison(mcomparison: MCOMPARISON,errors: string[],ids: strin
 	}
 	const keys = Object.keys(mcomparison);
 	const compBody = Object.values(mcomparison);
+
+
 	if(keys.length !== 1){
 		error = "invalid MCOMPARISON key";
 		errors.push(error);
 		return false;
 
+	}
+	if(Object.keys(compBody).length < 1){
+		error = `missing body for ${keys[0]}`;
+		errors.push(error);
+		return false;
 	}
 	if(!isValidMComparator(keys[0] as MCOMPARATOR,errors,ids)){
 		error = "Invalid MCOMPARATOR should be one of LT, GT, EQ";
@@ -87,6 +93,7 @@ function isValidMComparison(mcomparison: MCOMPARISON,errors: string[],ids: strin
 	if(typeof  compBody[0] !== "object"){
 		return false;
 	}
+
 	const mkey = Object.keys(compBody[0])[0];
 	const mkeyValue =  Object.values(compBody[0])[0];
 	return validateMkey(mkey as MKEY,errors,ids) && (typeof mkeyValue === "number");
@@ -161,22 +168,53 @@ function isValidLogiComparison(logicComp: LOGICCOMPARISON,errors: string[],ids: 
 	}
 	const keys = Object.keys(logicComp);
 	const values = Object.values(logicComp);
+	const firstKey = keys[0];
+	const firstValue = values[0];
+	const possibleValues = ["OR","AND"];
+
 	if(keys.length === 0){
 		error = `${logicComp} is invalid`;
+		errors.push(error);
 		return false;
 	}
-	return  isValidLogic(keys[0] as LOGIC,errors) && validateFILTERs(values[0],errors,ids);
+	if(possibleValues.includes(firstKey)){
+		error = `${logicComp} is invalid`;
+		errors.push(error);
+		return false;
+	}
+	if((firstKey === "AND" as LOGIC) && !Array.isArray(firstValue)){
+		error = `AND should be an array-provided type ${typeof firstValue}`;
+		errors.push(error);
+		return false;
+	}
+	if(firstKey === "OR" && firstValue.length < 1){
+		error = "`AND should not be empty`";
+		errors.push(error);
+		return false;
+	}
+	if((firstKey === "OR" as LOGIC) && !Array.isArray(firstValue)){
+		error = `OR should be an array-provided type ${typeof firstValue}`;
+		errors.push(error);
+		return false;
+
+	}
+	if(firstKey === "OR" && firstValue.length < 1){
+		error = "`OR should not be empty`";
+		errors.push(error);
+		return false;
+	}
+	return  isValidLogic(firstKey as LOGIC,errors) && validateFILTERs(firstValue,errors,ids);
 }
 
 function validateNegation(negation: NEGATION,errors: string[],ids: string[]): negation is NEGATION{
 	let error: string;
 	if(!negation || !negation.NOT){
-		error = `${negation} is invalid`;
+		error = `${negation} is invalid for NOT`;
 		errors.push(error);
 		return false;
 	}
 	if(typeof negation.NOT !== "object"){
-		error = `${negation} not an object`;
+		error = `${negation} not an object-negation must be an object`;
 		errors.push(error);
 		return false;
 	}
@@ -195,7 +233,9 @@ export function getFilterType(filter: FILTER): string{
 		case "IS":
 			return "SCOMPARISON";
 		case "LT":
+			return "MCOMPARISON";
 		case "GT":
+			return "MCOMPARISON";
 		case "EQ":
 			return "MCOMPARISON";
 		default:
@@ -209,7 +249,7 @@ function validateWHERE(where: any,errors: string[],ids: string[]): boolean{
 		error = "WHERE expects an object type";
 		errors.push(error);
 		return false;
-	}else if(where === {} as Record<never,never>){
+	}else if(Object.keys(where).length < 1){
 		return true;
 	}else{
 		return validateFILTER( where as FILTER,errors,ids);
@@ -231,7 +271,7 @@ function validateFILTER(filter: FILTER,errors: string[],ids: string[]): boolean{
 		error = "More than 1 filter provided, should be 1";
 		errors.push(error);
 		return false;
-	}else if(keys[0]) {
+	}else if(keys.length < 1) {
 		error = "Should provide a valid filter";
 		errors.push(error);
 		return false;
@@ -261,12 +301,12 @@ function validateFILTERs(filters: FILTER[],errors: string[],ids: string[]): bool
 export function validateIDString(str: IDSTRING,errors: string[],ids: string[]): boolean {
 	let error: string;
 	const pattern = new RegExp("[^_]+");
-	ids.push(str);
 	if(!pattern.test(str)){
 		error = `invalid idstring ${str}`;
 		errors.push(error);
 		return false;
 	}
+	ids.push(str);
 	return true;
 }
 
