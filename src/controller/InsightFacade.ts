@@ -140,7 +140,5 @@ export default class InsightFacade implements IInsightFacade {
 		}));
 	}
 }
-function isSectionValid(section: any) {
-	throw new Error("Function not implemented.");
-}
+
 

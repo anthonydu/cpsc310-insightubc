@@ -62,3 +62,7 @@ export interface PersistDataset extends InsightDataset {
 	sections: Section[];
 }
 
+export interface ValidationResponse{
+	valid: boolean,
+	error?: string
+}
