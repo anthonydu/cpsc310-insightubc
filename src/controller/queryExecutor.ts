@@ -5,6 +5,7 @@ import {SCOMPARISON,
 	Section,
 	LOGICCOMPARISON,
 	NEGATION} from "./queryTypes";
+import {getFilterType} from "./queryValidator";
 
 function IS(scomp: SCOMPARISON,section: Section): boolean {
 	// query will be validated before it arrives here,
@@ -65,19 +66,42 @@ function ORDER(order: unknown): boolean{
 }
 
 function AND(logicComp: LOGICCOMPARISON,section: Section): boolean{
-	// TODO: finish 	return false;
+	const and = logicComp.AND;
+	if (and) {
+		return and.every((condition) => FILTER(condition, section));
+	}
+	return false;
+
 	return false;
 }
 
 function OR(logicComp: LOGICCOMPARISON,section: Section): boolean{
-	// TODO: finish 	return false;
+	const or = logicComp.OR;
+	if (or) {
+		return or.some((condition) => FILTER(condition, section));
+	}
 	return false;
+
 }
 
 function FILTER(filter: FILTER,section: Section): boolean{
-	// should be recursive
-	// TODO: finish 	return false;
-	return false;
+	const mcomp = "MCOMPARISON";
+	const scomp = "SCOMPARISON";
+	const logic = "LOGICCOMPARISON";
+	const negation = "NEGATION";
+
+	const queryType = getFilterType(filter);
+	if (queryType === logic) {
+		return LOGICCOMPARISON(filter as unknown as LOGICCOMPARISON, section);
+	} else if (queryType === negation) {
+		return NOT(filter as NEGATION, section);
+	} else if (queryType === scomp) {
+		return SCOMPARISON(filter as SCOMPARISON, section);
+	} else if (queryType === mcomp) {
+		return MCOMPARISON(filter as unknown as MCOMPARISON, section);
+	}else{
+		return false;
+	}
 }
 
 function MCOMPARISON(mcomp: MCOMPARISON,section: Section): boolean{

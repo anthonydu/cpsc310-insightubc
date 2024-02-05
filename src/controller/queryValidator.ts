@@ -183,7 +183,7 @@ function validateNegation(negation: NEGATION,errors: string[]): negation is NEGA
 	return validateFILTER(negation.NOT,errors);
 }
 
-function getFilterType(filter: FILTER): string{
+export function getFilterType(filter: FILTER): string{
 	const filterKey = Object.keys(filter)[0];
 	switch(filterKey){
 		case "OR":
