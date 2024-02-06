@@ -246,6 +246,10 @@ function validateWHERE(where: any,errors: string[],ids: string[]): boolean{
 		error = "WHERE expects an object type";
 		errors.push(error);
 		return false;
+	}else if(Array.isArray(where)){
+		error = "WHERE expects should not be an array type";
+		errors.push(error);
+		return false;
 	}else if(Object.keys(where).length < 1){
 		return true;
 	}else{
