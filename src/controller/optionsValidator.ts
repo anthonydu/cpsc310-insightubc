@@ -19,14 +19,8 @@ export function validateOPTIONS(options: OPTIONS,errors: string[],ids: string[])
 		errors.push(error);
 		return false;
 	}
-
-	if(!options.COLUMNS){
+	if(!options.COLUMNS || !Array.isArray(options.COLUMNS)){
 		error = "OPTIONS missing COLUMNS";
-		errors.push(error);
-	}
-
-	if(!Array.isArray(options.COLUMNS)){
-		error = "COLUMNS must be an array";
 		errors.push(error);
 		return false;
 	}
@@ -42,7 +36,7 @@ export function validateOPTIONS(options: OPTIONS,errors: string[],ids: string[])
 		const parts = column.split(delimiter);
 		const requiredLength: number = 2;
 
-		if(parts.length !== requiredLength ){
+		if(parts.length < requiredLength ){
 			error = `${column} is not a valid column option`;
 			errors.push(error);
 			return false;
@@ -53,14 +47,18 @@ export function validateOPTIONS(options: OPTIONS,errors: string[],ids: string[])
 		if(!mkfields.includes(parts[1]) && !sfields.includes(parts[1])){
 			errors.push(`invalid skey or mkey found- ${parts[1]}`);
 			return false;
-
 		}
 		if(mkfields.includes(parts[1])){
-			return validateMkey(column as MKEY,errors,ids);
+			const mkeyvalid = validateMkey(column as MKEY,errors,ids);
+			if(!mkeyvalid){
+				return false;
+			}
 		}
-
 		if(sfields.includes(parts[1])){
-			return validateSkey(column as SKEY,errors,ids);
+			const skeyvalid = validateSkey(column as SKEY,errors,ids);
+			if(!skeyvalid){
+				return false;
+			}
 		}
 	}
 	return validateORDER(options,columns,errors);

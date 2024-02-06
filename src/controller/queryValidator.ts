@@ -68,7 +68,7 @@ function isValidMComparison(mcomparison: MCOMPARISON,errors: string[],ids: strin
 		return false;
 	}
 	const keys = Object.keys(mcomparison);
-	const compBody = Object.values(mcomparison);
+	const compBody = Object.values(mcomparison)[0];
 
 
 	if(keys.length !== 1){
@@ -87,15 +87,12 @@ function isValidMComparison(mcomparison: MCOMPARISON,errors: string[],ids: strin
 		errors.push(error);
 		return false;
 	}
-	if(!compBody[0] || compBody.length !== 1){
-		return false;
-	}
-	if(typeof  compBody[0] !== "object"){
+	if(typeof  compBody !== "object"){
 		return false;
 	}
 
-	const mkey = Object.keys(compBody[0])[0];
-	const mkeyValue =  Object.values(compBody[0])[0];
+	const mkey = Object.keys(compBody)[0];
+	const mkeyValue =  Object.values(compBody)[0];
 	return validateMkey(mkey as MKEY,errors,ids) && (typeof mkeyValue === "number");
 }
 
@@ -139,7 +136,7 @@ function isValidSComparison(scomp: SCOMPARISON,errors: string [],ids: string[]):
 
 	}else{
 		const ISBody = scomp.IS;
-		const skey = Object.values(ISBody)[0];
+		const skey = Object.keys(ISBody)[0];
 		const inputString = Object.values(ISBody)[0];
 
 		return validateInputString(inputString,errors) && validateSkey(skey as SKEY,errors,ids);
@@ -162,7 +159,7 @@ function isValidLogic(logic: LOGIC,errors: string[]): logic is LOGIC{
 function isValidLogiComparison(logicComp: LOGICCOMPARISON,errors: string[],ids: string[]): logicComp is LOGICCOMPARISON{
 	let error: string;
 	if(!logicComp || typeof logicComp !== "object"){
-		error = `${logicComp} is not an object`;
+		error = `${JSON.stringify(logicComp)} is not an object`;
 		errors.push(error);
 		return false;
 	}
@@ -173,26 +170,26 @@ function isValidLogiComparison(logicComp: LOGICCOMPARISON,errors: string[],ids: 
 	const possibleValues = ["OR","AND"];
 
 	if(keys.length === 0){
-		error = `${logicComp} is invalid`;
+		error = `${JSON.stringify(logicComp)} is invalid`;
 		errors.push(error);
 		return false;
 	}
-	if(possibleValues.includes(firstKey)){
-		error = `${logicComp} is invalid`;
+	if(!possibleValues.includes(firstKey)){
+		error = `${JSON.stringify(logicComp)} is invalid`;
 		errors.push(error);
 		return false;
 	}
-	if((firstKey === "AND" as LOGIC) && !Array.isArray(firstValue)){
+	if((firstKey === "AND") && !Array.isArray(firstValue)){
 		error = `AND should be an array-provided type ${typeof firstValue}`;
 		errors.push(error);
 		return false;
 	}
-	if(firstKey === "OR" && firstValue.length < 1){
+	if(firstKey === "AND" && firstValue.length < 1){
 		error = "`AND should not be empty`";
 		errors.push(error);
 		return false;
 	}
-	if((firstKey === "OR" as LOGIC) && !Array.isArray(firstValue)){
+	if((firstKey === "OR") && !Array.isArray(firstValue)){
 		error = `OR should be an array-provided type ${typeof firstValue}`;
 		errors.push(error);
 		return false;
@@ -209,12 +206,12 @@ function isValidLogiComparison(logicComp: LOGICCOMPARISON,errors: string[],ids: 
 function validateNegation(negation: NEGATION,errors: string[],ids: string[]): negation is NEGATION{
 	let error: string;
 	if(!negation || !negation.NOT){
-		error = `${negation} is invalid for NOT`;
+		error = `${JSON.stringify(negation)} is invalid for NOT`;
 		errors.push(error);
 		return false;
 	}
 	if(typeof negation.NOT !== "object"){
-		error = `${negation} not an object-negation must be an object`;
+		error = `${JSON.stringify(negation)} not an object-negation must be an object`;
 		errors.push(error);
 		return false;
 	}
@@ -314,6 +311,12 @@ export function validateIDString(str: IDSTRING,errors: string[],ids: string[]): 
 export function validateInputString(str: string,errors: string[]): boolean {
 	let error: string;
 	const pattern = new RegExp("[^*]*");
+	if(str.length > 2){
+		const trimmed = str.substring(1, str.length - 1);
+		if(trimmed.includes("*")){
+			return false;
+		}
+	}
 	if(!pattern.test(str)){
 		error = `invalid inputstring ${str}`;
 		errors.push(error);

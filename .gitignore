@@ -20,3 +20,4 @@ data/
 
 # nyc
 .nyc_output/
+output.txt
