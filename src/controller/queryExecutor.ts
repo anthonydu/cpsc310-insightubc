@@ -1,3 +1,4 @@
+import {InsightError, InsightResult} from "./IInsightFacade";
 import {SCOMPARISON,
 	// MCOMPARATOR,
 	MCOMPARISON,
@@ -61,25 +62,41 @@ function NOT(negation: NEGATION,section: Section): boolean {
 	return FILTER_DATA(filter,section);
 }
 
-function ORDER(order: unknown): boolean{
-	return false;
+export function orderResults(order: string,result: InsightResult[]){
+
+	if(result.length <= 0){
+		return ;
+	}
+
+	result.sort((first: InsightResult, second: InsightResult) => {
+        // Check if the field exists in both objects
+		const parts = order.split("_");
+
+
+		if (first[parts[1]] && second[parts[1]]) {
+			if(typeof first[parts[1]] === "string" && typeof second[parts[1]] === "string") {
+				return (first[parts[1]] as string).localeCompare(second[parts[1]] as string);
+			} else {
+				return (first[parts[1]] as number) - (second[parts[1]] as number);
+			}
+		} else {
+			// throw new InsightError(`Field "${parts[1]}" does not exist in some of the objects.`);
+			return -1;
+		}
+	});
 }
 
 function AND(logicComp: LOGICCOMPARISON,section: Section): boolean{
 	const and = logicComp.AND;
-	if (and) {
-		return and.every((condition) => FILTER_DATA(condition, section));
-	}
-	return false;
+	return and.every((condition) => FILTER_DATA(condition, section));
+
 
 }
 
 function OR(logicComp: LOGICCOMPARISON,section: Section): boolean{
 	const or = logicComp.OR;
-	if (or) {
-		return or.some((condition) => FILTER_DATA(condition, section));
-	}
-	return false;
+	return or.some((condition) => FILTER_DATA(condition, section));
+
 
 }
 
@@ -90,20 +107,21 @@ export function FILTER_DATA(filter: FILTER,section: Section): boolean{
 	const negation = "NEGATION";
 
 	const queryType = getFilterType(filter);
+
 	if (queryType === logic) {
-		return LOGICCOMPARISON(filter as unknown as LOGICCOMPARISON, section);
+		return logicComparison(filter as unknown as LOGICCOMPARISON, section);
 	} else if (queryType === negation) {
 		return NOT(filter as NEGATION, section);
 	} else if (queryType === scomp) {
-		return SCOMPARISON(filter as SCOMPARISON, section);
+		return scomparison(filter as SCOMPARISON, section);
 	} else if (queryType === mcomp) {
-		return MCOMPARISON(filter as unknown as MCOMPARISON, section);
+		return mcomparison(filter as unknown as MCOMPARISON, section);
 	}else{
 		return false;
 	}
 }
 
-function MCOMPARISON(mcomp: MCOMPARISON,section: Section): boolean{
+function mcomparison(mcomp: MCOMPARISON,section: Section): boolean{
 	const eq: unknown = mcomp.EQ;
 	if(eq){
 		return EQ(mcomp,section);
@@ -115,11 +133,11 @@ function MCOMPARISON(mcomp: MCOMPARISON,section: Section): boolean{
 	return GT(mcomp,section);
 }
 
-function SCOMPARISON(scomp: SCOMPARISON,section: Section): boolean{
+function scomparison(scomp: SCOMPARISON,section: Section): boolean{
 	return IS(scomp,section);
 }
 
-function LOGICCOMPARISON(lcomp: LOGICCOMPARISON,section: Section): boolean{
+function logicComparison(lcomp: LOGICCOMPARISON,section: Section): boolean{
 	const and = lcomp.AND;
 	if(and){
 		return AND(lcomp,section);
