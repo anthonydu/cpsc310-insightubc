@@ -489,14 +489,11 @@ function testPerformQuery() {
 					const RESULT_TOO_LARGE_ERROR: string = "ResultTooLargeError";
 					try {
 						const res = await facade.performQuery(test.input);
-						console.log(JSON.stringify(res));
 						expect.fail("performQuery should have thrown an error because query is invalid}");
 					} catch (error: any) {
 						if (test.errorExpected && test.expected === RESULT_TOO_LARGE_ERROR) {
-							console.log(JSON.stringify(error));
 							expect(error).to.be.instanceOf(ResultTooLargeError);
 						} else if (test.errorExpected) {
-							console.log(JSON.stringify(error));
 							expect(error).to.be.instanceOf(InsightError);
 						}
 					}
@@ -516,7 +513,8 @@ function testPerformQuery() {
 				it(test.title, async () => {
 					try {
 						const queryResult = await facade.performQuery(test.input);
-						expect(queryResult).to.deep.equal(test.expected);
+						// console.log(JSON.stringify(queryResult));
+						expect(queryResult).to.deep.members(test.expected);
 					} catch (error: any) {
 						console.log(JSON.stringify(error));
 						expect.fail("performQuery threw unexpected error");

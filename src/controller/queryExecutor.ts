@@ -59,7 +59,7 @@ function LT(mcomp: MCOMPARISON, section: Section): boolean {
 function NOT(negation: NEGATION,section: Section): boolean {
 	const filter: FILTER = negation.NOT;
 
-	return FILTER_DATA(filter,section);
+	return !FILTER_DATA(filter,section);
 }
 
 export function orderResults(order: string,result: InsightResult[]){
@@ -130,7 +130,10 @@ function mcomparison(mcomp: MCOMPARISON,section: Section): boolean{
 	if(lt){
 		return LT(mcomp,section);
 	}
-	return GT(mcomp,section);
+	if(mcomp.GT){
+		return GT(mcomp,section);
+	}
+	return false;
 }
 
 function scomparison(scomp: SCOMPARISON,section: Section): boolean{
@@ -141,8 +144,10 @@ function logicComparison(lcomp: LOGICCOMPARISON,section: Section): boolean{
 	const and = lcomp.AND;
 	if(and){
 		return AND(lcomp,section);
-	}else{
+	}else if(lcomp.OR){
 		return OR(lcomp,section);
+	}else{
+		return false;
 	}
 }
 
@@ -158,9 +163,9 @@ function matchPattern(inputString: string, fieldValue: string): boolean {
 	if (matchExat) {
 		return inputString === fieldValue;
 	} else if (matchRight) {
-		return fieldValue.endsWith(inputString);
+		return fieldValue.endsWith(inputString.substring(1));
 	} else if (matchLeft) {
-		return fieldValue.startsWith(inputString);
+		return fieldValue.startsWith(inputString.substring(0,inputString.length - 1));
 	} else if (matchCenter) {
 		const trimmedInput = inputString.slice(1, -1);
 		return fieldValue.includes(trimmedInput);

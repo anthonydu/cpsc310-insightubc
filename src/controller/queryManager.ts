@@ -21,7 +21,6 @@ export class QueryManager {
 		this.errors = [];
 		this.ids = [];
 		this.dataFolder = "data/datasets.json";
-
 	}
 
 	public async execute(): Promise<InsightResult[]> {
