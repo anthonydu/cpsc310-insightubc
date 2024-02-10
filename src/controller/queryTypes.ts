@@ -23,15 +23,15 @@ export interface NEGATION {
     NOT: FILTER;
 }
 
-export type LOGICCOMPARISON = {
+export type LOGICCOMPARISON = Partial<{
 	[key in LOGIC]: FILTER[];
-};
+}>;
 
-export type MCOMPARISON = {
-    [comparator in MCOMPARATOR]: {
+export type MCOMPARISON = Partial<{
+    [comparator in MCOMPARATOR]: Partial<{
         [mkey in MKEY]: number;
-    };
-};
+    }>;
+}>;
 
 export type FILTER = LOGICCOMPARISON | MCOMPARISON | SCOMPARISON | NEGATION;
 

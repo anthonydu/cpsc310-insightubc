@@ -30,6 +30,32 @@ export default class InsightFacade implements IInsightFacade {
 		}
 	}
 
+	private async processData(sections: Section[],files: Array<Promise<string>>){
+		for (const file of await Promise.all(files)) {
+			try {
+				JSON.parse(file);
+			} catch {
+				continue;
+			}
+			const special: string = "overall";
+			for (const section of JSON.parse(file).result) {
+
+				sections.push({
+					uuid: section.id as string,
+					id: section.Course as string,
+					title: section.Title as string,
+					instructor: section.Professor as string,
+					dept: section.Subject as string,
+					year: section.Section === special ? 1900 : section.Year as number,
+					avg: section.Avg as number,
+					pass: section.Pass as number,
+					fail: section.Fail as number,
+					audit: section.Audit as number,
+				} as Section);
+			}
+		}
+	}
+
 	private static idInvalid(datasets: PersistDataset[], id: string) {
 		return id.includes("_") || id.trim() === "";
 	}
@@ -53,27 +79,28 @@ export default class InsightFacade implements IInsightFacade {
 			for (const file of Object.values(courses.files)) {
 				files.push(file.async("string"));
 			}
-			for (const file of await Promise.all(files)) {
-				try {
-					JSON.parse(file);
-				} catch {
-					continue;
-				}
-				for (const section of JSON.parse(file).result) {
-					sections.push({
-						uuid: section.id,
-						id: section.Course,
-						title: section.Title,
-						instructor: section.Professor,
-						dept: section.Subject,
-						year: section.Year,
-						avg: section.Avg,
-						pass: section.Pass,
-						fail: section.Fail,
-						audit: section.Audit,
-					});
-				}
-			}
+			// for (const file of await Promise.all(files)) {
+			// 	try {
+			// 		JSON.parse(file);
+			// 	} catch {
+			// 		continue;
+			// 	}
+			// 	for (const section of JSON.parse(file).result) {
+			// 		sections.push({
+			// 			uuid: section.id,
+			// 			id: section.Course,
+			// 			title: section.Title,
+			// 			instructor: section.Professor,
+			// 			dept: section.Subject,
+			// 			year: section.Year,
+			// 			avg: section.Avg,
+			// 			pass: section.Pass,
+			// 			fail: section.Fail,
+			// 			audit: section.Audit,
+			// 		});
+			// 	}
+			// }
+			await this.processData(sections,files);
 		} catch (e) {
 			throw new InsightError(e as string);
 		}

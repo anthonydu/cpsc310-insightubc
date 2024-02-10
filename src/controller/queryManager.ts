@@ -53,6 +53,7 @@ export class QueryManager {
 			return Promise.reject(new InsightError(firstError));
 		}
 		const filter = this.query.WHERE;
+		// empty WHERE, get everything
 		if(Object.keys(filter).length === 0){
 			this.result = dataset;
 		}else{
@@ -78,11 +79,16 @@ export class QueryManager {
 	public getColumns(section: InsightResult): InsightResult{
 		const columns: string[] = this.query.OPTIONS.COLUMNS;
 		let res: InsightResult = {};
+		const numericFields = ["avg","pass","fail","audit","year"];
 		for (const col  of columns) {
 			const parts = col.split("_");
-			res[col] = section[parts[1]];
+			if(numericFields.includes(parts[1])){
+				res[col] = (section[parts[1]] as number);
+			}else{
+				res[col] = section[parts[1]];
+			}
 		}
-		return res as InsightResult;
+		return res;
 	}
 
 	public validate(): boolean{
@@ -117,21 +123,20 @@ export class QueryManager {
 		}
 	}
 
-	private async getDatasetById(id: string): Promise<any[]> {
-		try {
-			const datasets = await this.readPersistedData();
-			let queryData = null;
-			for(const d of datasets){
 
+	private async getDatasetById(id: string): Promise<InsightResult[]> {
+		try {
+			const datasets: InsightResult[] = await this.readPersistedData();
+
+			for(const d of datasets){
 				if(d.id === id){
-					queryData = d.data;
-					break;
+
+					return d.data as unknown as InsightResult[];
 				}
 			}
-			if(!queryData){
-				throw new InsightError();
-			}
-			return queryData;
+
+			throw new InsightError();
+
 		}catch(error: unknown){
 
 			throw new InsightError("Error reading data");

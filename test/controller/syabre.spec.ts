@@ -508,18 +508,19 @@ function testPerformQuery() {
 			} catch (e: unknown) {
 				expect.fail(`Failed to read one or more test queries. ${e}`);
 			}
-
 			validQueries.forEach((test: ITestQuery) => {
+
 				it(test.title, async () => {
 					try {
 						const queryResult = await facade.performQuery(test.input);
-						// console.log(JSON.stringify(queryResult));
+							// console.log(JSON.stringify(queryResult));
 						expect(queryResult).to.deep.members(test.expected);
 					} catch (error: any) {
-						console.log(JSON.stringify(error));
+						console.log("ERROR",error);
 						expect.fail("performQuery threw unexpected error");
 					}
 				});
+
 			});
 		});
 	});

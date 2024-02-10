@@ -21,3 +21,5 @@ data/
 # nyc
 .nyc_output/
 output.txt
+output.json
+output2.json
