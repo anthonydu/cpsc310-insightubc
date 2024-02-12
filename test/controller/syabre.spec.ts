@@ -174,7 +174,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/invalidJSON-missing-brackets.zip");
+			sections = await getContentFromArchives("syabre/InvalidJSON-missing-brackets.zip");
 		});
 
 		beforeEach(async () => {
@@ -200,7 +200,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/invalidJSON-missing-quotations.zip");
+			sections = await getContentFromArchives("syabre/InvalidJSON-missing-quotations.zip");
 		});
 
 		beforeEach(async () => {
