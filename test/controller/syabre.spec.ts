@@ -434,7 +434,7 @@ function testListDatasets() {
 		let facade: InsightFacade;
 
 		before(async function () {
-			sections1 = await getContentFromArchives("syabre/valid1.zip");
+			sections1 = await getContentFromArchives("syabre/Valid1.zip");
 			sections2 = await getContentFromArchives("syabre/multiple-valid.zip");
 			sections3 = await getContentFromArchives("syabre/1.empty-1.valid.zip");
 		});
