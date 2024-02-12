@@ -513,8 +513,10 @@ function testPerformQuery() {
 				it(test.title, async () => {
 					try {
 						const queryResult = await facade.performQuery(test.input);
-							// console.log(JSON.stringify(queryResult));
-						expect(queryResult.sort()).to.deep.members(test.expected.sort());
+
+						expect(queryResult).to.deep.members(test.expected);
+						expect(test.expected).to.deep.members(queryResult);
+						expect(queryResult.length).to.deep.equal(test.expected.length);
 					} catch (error: any) {
 						console.log("ERROR",error);
 						expect.fail("performQuery threw unexpected error");
