@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-// eslint-disable-next-line max-len
 import {FILTER, QUERY, Section} from "./queryTypes";
 import {InsightError, InsightResult, ResultTooLargeError} from "./IInsightFacade";
 import {validateQuery} from "./queryValidator";

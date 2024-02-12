@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+
 import JSZip from "jszip";
 import * as fs from "fs-extra";
 
@@ -6,7 +6,6 @@ import {IInsightFacade,
 	InsightDataset,
 	InsightDatasetKind,
 	InsightError, InsightResult,
-	ResultTooLargeError,
 	PersistDataset,
 	NotFoundError} from "./IInsightFacade";
 import {QueryManager} from "./queryManager";
