@@ -41,16 +41,16 @@ export default class InsightFacade implements IInsightFacade {
 			for (const section of JSON.parse(file).result) {
 
 				sections.push({
-					uuid: section.id as string,
+					uuid: String(section.id),
 					id: section.Course as string,
 					title: section.Title as string,
 					instructor: section.Professor as string,
 					dept: section.Subject as string,
-					year: section.Section === special ? 1900 : section.Year as number,
-					avg: section.Avg as number,
-					pass: section.Pass as number,
-					fail: section.Fail as number,
-					audit: section.Audit as number,
+					year: section.Section === special ? 1900 : parseInt(section.Year,10),
+					avg: parseFloat(section.Avg) ,
+					pass: parseInt(section.Pass, 10),
+					fail: parseInt(section.Fail, 10),
+					audit: parseInt(section.Audit, 10),
 				} as Section);
 			}
 		}
