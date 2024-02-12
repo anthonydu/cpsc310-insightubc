@@ -55,7 +55,7 @@ export class QueryManager {
 		const filter = this.query.WHERE;
 		// empty WHERE, get everything
 		if(Object.keys(filter).length === 0){
-			this.result = dataset;
+			this.result = dataset.map((section)=> this.getColumns(section));
 		}else{
 			for(const section of dataset as unknown as InsightResult[]) {
 				if(FILTER_DATA(filter as FILTER,section as unknown as Section)){
