@@ -225,7 +225,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/no-JSON.zip");
+			sections = await getContentFromArchives("syabre/No-JSON.zip");
 		});
 
 		beforeEach(async () => {
