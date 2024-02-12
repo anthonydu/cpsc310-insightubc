@@ -18,7 +18,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/valid1.zip");
+			sections = await getContentFromArchives("syabre/Valid1.zip");
 		});
 
 		beforeEach(async () => {
@@ -338,7 +338,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/valid1.zip");
+			sections = await getContentFromArchives("syabre/Valid1.zip");
 		});
 
 		beforeEach(async () => {
@@ -384,7 +384,7 @@ function testRemoveDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/valid1.zip");
+			sections = await getContentFromArchives("syabre/Valid1.zip");
 		});
 
 		beforeEach(async () => {
