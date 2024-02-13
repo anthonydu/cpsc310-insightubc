@@ -18,7 +18,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/valid1.zip");
+			sections = await getContentFromArchives("syabre/Valid1.zip");
 		});
 
 		beforeEach(async () => {
@@ -174,7 +174,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/invalidJSON-missing-brackets.zip");
+			sections = await getContentFromArchives("syabre/InvalidJSON-missing-brackets.zip");
 		});
 
 		beforeEach(async () => {
@@ -200,7 +200,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/invalidJSON-missing-quotations.zip");
+			sections = await getContentFromArchives("syabre/InvalidJSON-missing-quotations.zip");
 		});
 
 		beforeEach(async () => {
@@ -225,7 +225,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/no-JSON.zip");
+			sections = await getContentFromArchives("syabre/No-JSON.zip");
 		});
 
 		beforeEach(async () => {
@@ -338,7 +338,7 @@ function testAddDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/valid1.zip");
+			sections = await getContentFromArchives("syabre/Valid1.zip");
 		});
 
 		beforeEach(async () => {
@@ -384,7 +384,7 @@ function testRemoveDataset() {
 		let facade: InsightFacade;
 
 		before(async () => {
-			sections = await getContentFromArchives("syabre/valid1.zip");
+			sections = await getContentFromArchives("syabre/Valid1.zip");
 		});
 
 		beforeEach(async () => {
@@ -434,7 +434,7 @@ function testListDatasets() {
 		let facade: InsightFacade;
 
 		before(async function () {
-			sections1 = await getContentFromArchives("syabre/valid1.zip");
+			sections1 = await getContentFromArchives("syabre/Valid1.zip");
 			sections2 = await getContentFromArchives("syabre/multiple-valid.zip");
 			sections3 = await getContentFromArchives("syabre/1.empty-1.valid.zip");
 		});
@@ -488,7 +488,7 @@ function testPerformQuery() {
 				it(`${test.title}`, async () => {
 					const RESULT_TOO_LARGE_ERROR: string = "ResultTooLargeError";
 					try {
-						await facade.performQuery(test.input);
+						const res = await facade.performQuery(test.input);
 						expect.fail("performQuery should have thrown an error because query is invalid}");
 					} catch (error: any) {
 						if (test.errorExpected && test.expected === RESULT_TOO_LARGE_ERROR) {
@@ -508,16 +508,21 @@ function testPerformQuery() {
 			} catch (e: unknown) {
 				expect.fail(`Failed to read one or more test queries. ${e}`);
 			}
-
 			validQueries.forEach((test: ITestQuery) => {
+
 				it(test.title, async () => {
 					try {
 						const queryResult = await facade.performQuery(test.input);
-						expect(queryResult).to.deep.equal(test.expected);
+
+						expect(queryResult).to.deep.members(test.expected);
+						expect(test.expected).to.deep.members(queryResult);
+						expect(queryResult.length).to.deep.equal(test.expected.length);
 					} catch (error: any) {
+						console.log("ERROR",error);
 						expect.fail("performQuery threw unexpected error");
 					}
 				});
+
 			});
 		});
 	});

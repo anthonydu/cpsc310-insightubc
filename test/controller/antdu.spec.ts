@@ -188,7 +188,9 @@ export default function testInsightFacade() {
 			});
 			validQueries.forEach((validQuery) => {
 				it(`${validQuery.title} fulfilled`, () => {
-					return expect(facade.performQuery(validQuery.input)).to.eventually.become(validQuery.expected);
+					const exp = expect(facade.performQuery(validQuery.input))
+						.to.eventually.deep.members(validQuery.expected);
+					return exp;
 				});
 			});
 			invalidQueries.forEach((invalidQuery) => {

@@ -1,22 +1,22 @@
+
 import JSZip from "jszip";
 import * as fs from "fs-extra";
-import {
-	IInsightFacade,
+
+import {IInsightFacade,
 	InsightDataset,
 	InsightDatasetKind,
-	InsightError,
-	InsightResult,
-	NotFoundError,
-	PersistDataset,
-	Section,
-} from "./IInsightFacade";
+	InsightError, InsightResult,
+	NotFoundError} from "./IInsightFacade";
+import {QueryManager} from "./queryManager";
+import {Section, PersistDataset} from "./queryTypes";
 
-const persistFile = "./data/datasets.json";
 
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
+ *
  */
+const persistFile = "data/datasets.json";
 
 export default class InsightFacade implements IInsightFacade {
 	private static async readPersist() {
@@ -25,6 +25,32 @@ export default class InsightFacade implements IInsightFacade {
 		} catch {
 			// TODO possibly throw an error here
 			return [];
+		}
+	}
+
+	private async processData(sections: Section[],files: Array<Promise<string>>){
+		for (const file of await Promise.all(files)) {
+			try {
+				JSON.parse(file);
+			} catch {
+				continue;
+			}
+			const special: string = "overall";
+			for (const section of JSON.parse(file).result) {
+
+				sections.push({
+					uuid: String(section.id),
+					id: section.Course as string,
+					title: section.Title as string,
+					instructor: section.Professor as string,
+					dept: section.Subject as string,
+					year: section.Section === special ? 1900 : parseInt(section.Year,10),
+					avg: parseFloat(section.Avg) ,
+					pass: parseInt(section.Pass, 10),
+					fail: parseInt(section.Fail, 10),
+					audit: parseInt(section.Audit, 10),
+				} as Section);
+			}
 		}
 	}
 
@@ -51,27 +77,28 @@ export default class InsightFacade implements IInsightFacade {
 			for (const file of Object.values(courses.files)) {
 				files.push(file.async("string"));
 			}
-			for (const file of await Promise.all(files)) {
-				try {
-					JSON.parse(file);
-				} catch {
-					continue;
-				}
-				for (const section of JSON.parse(file).result) {
-					sections.push({
-						uuid: section.id,
-						id: section.Course,
-						title: section.Title,
-						instructor: section.Professor,
-						dept: section.Subject,
-						year: section.Year,
-						avg: section.Avg,
-						pass: section.Pass,
-						fail: section.Fail,
-						audit: section.Audit,
-					});
-				}
-			}
+			// for (const file of await Promise.all(files)) {
+			// 	try {
+			// 		JSON.parse(file);
+			// 	} catch {
+			// 		continue;
+			// 	}
+			// 	for (const section of JSON.parse(file).result) {
+			// 		sections.push({
+			// 			uuid: section.id,
+			// 			id: section.Course,
+			// 			title: section.Title,
+			// 			instructor: section.Professor,
+			// 			dept: section.Subject,
+			// 			year: section.Year,
+			// 			avg: section.Avg,
+			// 			pass: section.Pass,
+			// 			fail: section.Fail,
+			// 			audit: section.Audit,
+			// 		});
+			// 	}
+			// }
+			await this.processData(sections,files);
 		} catch (e) {
 			throw new InsightError(e as string);
 		}
@@ -97,7 +124,9 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public async performQuery(query: unknown): Promise<InsightResult[]> {
-		return Promise.reject("Not implemented.");
+		const queryManager: QueryManager = new QueryManager(query);
+		return queryManager.execute();
+
 	}
 
 	public async listDatasets(): Promise<InsightDataset[]> {
@@ -109,7 +138,5 @@ export default class InsightFacade implements IInsightFacade {
 		}));
 	}
 }
-function isSectionValid(section: any) {
-	throw new Error("Function not implemented.");
-}
+
 
