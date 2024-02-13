@@ -1,36 +1,28 @@
 import {InsightResult} from "./IInsightFacade";
-import {SCOMPARISON,
-	// MCOMPARATOR,
-	MCOMPARISON,
-	FILTER,
-	Section,
-	LOGICCOMPARISON,
-	NEGATION} from "./queryTypes";
+import {FILTER, LOGICCOMPARISON, MCOMPARISON, NEGATION, SCOMPARISON, Section} from "./queryTypes";
 import {getFilterType} from "./queryValidator";
 
-function IS(scomp: SCOMPARISON,section: Section): boolean {
+function IS(scomp: SCOMPARISON, section: Section): boolean {
 	// query will be validated before it arrives here,
 	// we can therefore be sure that the line below will not produce an error
-	const body: Record<string,string> = Object.values(scomp)[0];
+	const body: Record<string, string> = Object.values(scomp)[0];
 	const skey: string = Object.keys(body)[0];
 	const svalue: string = body[skey];
 	const delimiter: string = "_";
 	const parts: string[] = skey.split(delimiter);
 	const sfield = parts[1];
-	const fieldValue: string = getValueByFieldName(section,sfield as keyof Section) as string;
+	const fieldValue: string = getValueByFieldName(section, sfield as keyof Section) as string;
 
-	const match = matchPattern(svalue,fieldValue as string);
+	const match = matchPattern(svalue, fieldValue as string);
 	// console.log("INPUT_STRING: ",svalue);
 	// console.log("FIELD_VALUE: ",fieldValue);
 	// console.log("MATCH: ",match);
 	return match;
-
-
 }
 
-function EQ(mcomp: MCOMPARISON,section: Section): boolean{
+function EQ(mcomp: MCOMPARISON, section: Section): boolean {
 	const body: any = mcomp.EQ;
-	if(!body){
+	if (!body) {
 		return false;
 	}
 	const mkey: string = Object.keys(body)[0];
@@ -38,14 +30,14 @@ function EQ(mcomp: MCOMPARISON,section: Section): boolean{
 	const delimiter: string = "_";
 	const parts: string[] = mkey.split(delimiter);
 	const sfield = parts[1];
-	const fieldValue: number = getValueByFieldName(section,sfield as keyof Section) as number;
+	const fieldValue: number = getValueByFieldName(section, sfield as keyof Section) as number;
 
 	return fieldValue === mvalue;
 }
 
-function GT(mcomp: MCOMPARISON,section: Section): boolean {
+function GT(mcomp: MCOMPARISON, section: Section): boolean {
 	const body: any = mcomp.GT;
-	if(!body){
+	if (!body) {
 		return false;
 	}
 	const mkey: string = Object.keys(body)[0];
@@ -53,7 +45,7 @@ function GT(mcomp: MCOMPARISON,section: Section): boolean {
 	const delimiter: string = "_";
 	const parts: string[] = mkey.split(delimiter);
 	const sfield = parts[1];
-	const fieldValue: number = getValueByFieldName(section,sfield as keyof Section) as number;
+	const fieldValue: number = getValueByFieldName(section, sfield as keyof Section) as number;
 	// console.log(mcomp);
 	// console.log("GREATER THAN: ",fieldValue > mvalue,mkey, "--",mvalue,"--",fieldValue);
 	return fieldValue > mvalue;
@@ -61,7 +53,7 @@ function GT(mcomp: MCOMPARISON,section: Section): boolean {
 
 function LT(mcomp: MCOMPARISON, section: Section): boolean {
 	const body: any = mcomp.LT;
-	if(!body){
+	if (!body) {
 		return false;
 	}
 	const mkey: string = Object.keys(body)[0];
@@ -69,65 +61,60 @@ function LT(mcomp: MCOMPARISON, section: Section): boolean {
 	const delimiter: string = "_";
 	const parts: string[] = mkey.split(delimiter);
 	const sfield = parts[1];
-	const fieldValue: number = getValueByFieldName(section,sfield as keyof Section) as number;
+	const fieldValue: number = getValueByFieldName(section, sfield as keyof Section) as number;
 	// console.log(mcomp);
 	// console.log("LESS THAN: ",fieldValue < mvalue,mkey, "--",mvalue,"--",fieldValue);
 	return fieldValue < mvalue;
 }
 
-function NOT(negation: NEGATION,section: Section): boolean {
+function NOT(negation: NEGATION, section: Section): boolean {
 	const filter: FILTER = negation.NOT;
 
-	return !FILTER_DATA(filter,section);
+	return !FILTER_DATA(filter, section);
 }
 
-export function orderResults(order: string,result: InsightResult[]){
-
-	if(result.length <= 0){
-		return ;
+export function orderResults(order: string, result: InsightResult[]) {
+	if (result.length <= 0) {
+		return;
 	}
 
 	// Sorting logic based on the 'order' parameter
 	result.sort((a: InsightResult, b: InsightResult) => {
-        // Ensure that the properties exist in both a and b
-		const cond1: boolean = a[order] !== null && a[order] !== undefined ;
-		const cond2: boolean = b[order] !== null && b[order] !== undefined ;
+		// Ensure that the properties exist in both a and b
+		const cond1: boolean = a[order] !== null && a[order] !== undefined;
+		const cond2: boolean = b[order] !== null && b[order] !== undefined;
 		// if (cond1 && cond2) {
-            // If the properties are numeric, compare them as numbers
+		// If the properties are numeric, compare them as numbers
 		if (typeof a[order] === "number" && typeof b[order] === "number") {
 			return (a[order] as number) - (b[order] as number);
 		}
-            // If the properties are strings, compare them as strings
+		// If the properties are strings, compare them as strings
 		if (typeof a[order] === "string" && typeof b[order] === "string") {
 			return String(a[order]).localeCompare(String(b[order]));
 		}
 		// }
-        // If the properties are not comparable, leave the order unchanged
+		// If the properties are not comparable, leave the order unchanged
 		return 0;
 	});
 }
 
-function AND(logicComp: LOGICCOMPARISON,section: Section): boolean{
+function AND(logicComp: LOGICCOMPARISON, section: Section): boolean {
 	const and = logicComp.AND;
-	if(!and){
+	if (!and) {
 		return false;
 	}
 	return and.every((condition) => FILTER_DATA(condition, section));
-
-
 }
 
-function OR(logicComp: LOGICCOMPARISON,section: Section): boolean{
+function OR(logicComp: LOGICCOMPARISON, section: Section): boolean {
 	const or = logicComp.OR;
-	if(!or){
+	if (!or) {
 		return false;
 	}
 	return or.some((condition) => FILTER_DATA(condition, section));
-
-
 }
 
-export function FILTER_DATA(filter: any,section: Section): boolean{
+export function FILTER_DATA(filter: any, section: Section): boolean {
 	const mcomp = "MCOMPARISON";
 	const scomp = "SCOMPARISON";
 	const logic = "LOGICCOMPARISON";
@@ -145,43 +132,41 @@ export function FILTER_DATA(filter: any,section: Section): boolean{
 		return scomparison(filter as SCOMPARISON, section);
 	} else if (queryType === mcomp) {
 		return mcomparison(filter as unknown as MCOMPARISON, section);
-	}else{
-
+	} else {
 		return false;
 	}
 }
 
-function mcomparison(mcomp: MCOMPARISON,section: Section): boolean{
+function mcomparison(mcomp: MCOMPARISON, section: Section): boolean {
 	// console.log("M COMP",JSON.stringify(mcomp));
 	const eq: unknown = mcomp.EQ;
-	if(eq){
-		return EQ(mcomp,section);
+	if (eq) {
+		return EQ(mcomp, section);
 	}
 	const lt: unknown = mcomp.LT;
-	if(lt){
-		return LT(mcomp,section);
+	if (lt) {
+		return LT(mcomp, section);
 	}
-	if(mcomp.GT){
-		return GT(mcomp,section);
+	if (mcomp.GT) {
+		return GT(mcomp, section);
 	}
 	return false;
 }
 
-function scomparison(scomp: SCOMPARISON,section: Section): boolean{
-	return IS(scomp,section);
+function scomparison(scomp: SCOMPARISON, section: Section): boolean {
+	return IS(scomp, section);
 }
 
-function logicComparison(lcomp: LOGICCOMPARISON,section: Section): boolean{
+function logicComparison(lcomp: LOGICCOMPARISON, section: Section): boolean {
 	const and = lcomp.AND;
-	if(and){
-		return AND(lcomp,section);
-	}else if(lcomp.OR){
-		return OR(lcomp,section);
-	}else{
+	if (and) {
+		return AND(lcomp, section);
+	} else if (lcomp.OR) {
+		return OR(lcomp, section);
+	} else {
 		return false;
 	}
 }
-
 
 function matchPattern(inputString: string, fieldValue: string): boolean {
 	if (inputString === "") {
@@ -198,7 +183,7 @@ function matchPattern(inputString: string, fieldValue: string): boolean {
 	} else if (matchRight) {
 		return String(fieldValue).endsWith(inputString.substring(1));
 	} else if (matchLeft) {
-		return String(fieldValue).startsWith(inputString.substring(0,inputString.length - 1));
+		return String(fieldValue).startsWith(inputString.substring(0, inputString.length - 1));
 	} else if (matchCenter) {
 		const trimmedInput = inputString.slice(1, -1);
 		return String(fieldValue).includes(trimmedInput);
@@ -210,5 +195,3 @@ function matchPattern(inputString: string, fieldValue: string): boolean {
 function getValueByFieldName<T, K extends keyof T>(obj: T, fieldName: K): T[K] {
 	return obj[fieldName];
 }
-
-

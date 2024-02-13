@@ -1,15 +1,16 @@
-
-import JSZip from "jszip";
 import * as fs from "fs-extra";
+import JSZip from "jszip";
 
-import {IInsightFacade,
+import {
+	IInsightFacade,
 	InsightDataset,
 	InsightDatasetKind,
-	InsightError, InsightResult,
-	NotFoundError} from "./IInsightFacade";
+	InsightError,
+	InsightResult,
+	NotFoundError,
+} from "./IInsightFacade";
 import {QueryManager} from "./queryManager";
-import {Section, PersistDataset} from "./queryTypes";
-
+import {PersistDataset, Section} from "./queryTypes";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -28,7 +29,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 	}
 
-	private async processData(sections: Section[],files: Array<Promise<string>>){
+	private async processData(sections: Section[], files: Array<Promise<string>>) {
 		for (const file of await Promise.all(files)) {
 			try {
 				JSON.parse(file);
@@ -37,15 +38,14 @@ export default class InsightFacade implements IInsightFacade {
 			}
 			const special: string = "overall";
 			for (const section of JSON.parse(file).result) {
-
 				sections.push({
 					uuid: String(section.id),
 					id: section.Course as string,
 					title: section.Title as string,
 					instructor: section.Professor as string,
 					dept: section.Subject as string,
-					year: section.Section === special ? 1900 : parseInt(section.Year,10),
-					avg: parseFloat(section.Avg) ,
+					year: section.Section === special ? 1900 : parseInt(section.Year, 10),
+					avg: parseFloat(section.Avg),
 					pass: parseInt(section.Pass, 10),
 					fail: parseInt(section.Fail, 10),
 					audit: parseInt(section.Audit, 10),
@@ -98,7 +98,7 @@ export default class InsightFacade implements IInsightFacade {
 			// 		});
 			// 	}
 			// }
-			await this.processData(sections,files);
+			await this.processData(sections, files);
 		} catch (e) {
 			throw new InsightError(e as string);
 		}
@@ -126,7 +126,6 @@ export default class InsightFacade implements IInsightFacade {
 	public async performQuery(query: unknown): Promise<InsightResult[]> {
 		const queryManager: QueryManager = new QueryManager(query);
 		return queryManager.execute();
-
 	}
 
 	public async listDatasets(): Promise<InsightDataset[]> {
@@ -138,5 +137,3 @@ export default class InsightFacade implements IInsightFacade {
 		}));
 	}
 }
-
-
