@@ -59,7 +59,7 @@ export interface Section {
 }
 
 export interface PersistDataset extends InsightDataset {
-	sections: Section[];
+	data: Section[];
 }
 
 export interface ValidationResponse{

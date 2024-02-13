@@ -6,10 +6,9 @@ import {IInsightFacade,
 	InsightDataset,
 	InsightDatasetKind,
 	InsightError, InsightResult,
-	PersistDataset,
 	NotFoundError} from "./IInsightFacade";
 import {QueryManager} from "./queryManager";
-import {Section} from "./queryTypes";
+import {Section, PersistDataset} from "./queryTypes";
 
 
 /**
