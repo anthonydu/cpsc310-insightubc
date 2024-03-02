@@ -11,7 +11,8 @@ import {QUERY,
 	// SFIELD,
 	// MFIELD,
 	LOGICCOMPARISON,
-	LOGIC
+	LOGIC,
+	KEY
 } from "./queryTypes";
 
 function isValidJSON(jsonString: string,errors: string[]): boolean {

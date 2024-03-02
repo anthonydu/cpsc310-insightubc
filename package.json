@@ -13,7 +13,7 @@
 		"express": "4.18.2",
 		"fs-extra": "11.1.0",
 		"jszip": "3.10.1",
-		"parse5": "7.1.2"
+		"parse5": "^7.1.2"
 	},
 	"devDependencies": {
 		"@tsconfig/node18": "1.0.1",

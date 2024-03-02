@@ -141,6 +141,14 @@ export class QueryManager {
 		}
 	}
 
+	public groupBy(){
+		return null;
+	}
+
+	public apply(){
+		return null;
+	}
+
 }
 
 

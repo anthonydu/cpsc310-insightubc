@@ -8,7 +8,8 @@ import {// QUERY,
 	IDSTRING,
 	SFIELD,
 	MFIELD,
-	OPTIONS
+	OPTIONS,
+	ORDER
 } from "./queryTypes";
 import {validateIDString, validateInputString} from "./queryValidator";
 
@@ -63,22 +64,45 @@ export function validateOPTIONS(options: OPTIONS,errors: string[],ids: string[])
 	}
 	return validateORDER(options,columns,errors);
 }
+
+function hasOnlyDirAndKeys(obj: any): obj is ORDER {
+	return typeof obj === "object" &&
+           obj !== null &&
+           "dir" in obj &&
+           "keys" in obj &&
+           Object.keys(obj).length === 2; // Ensure no extra properties
+}
 function validateORDER(options: OPTIONS,columns: string[],errors: string[]){
 	let error: string;
-	if(!options.ORDER && Object.keys(options).length > 1){
+	if(!options.ORDER){
 		errors.push(`Invalid ORDER key ${Object.keys(options)[1]}`);
 		return false;
 
 	}
-	if(options.ORDER && !validateInputString(options.ORDER,errors)){
+	if(typeof options.ORDER === "string" && !validateInputString(options.ORDER,errors)){
 		return false;
-	}
-
-	if(options.ORDER && !columns.includes(options.ORDER as string)){
+	}else if(typeof options.ORDER === "string" && !columns.includes(options.ORDER as string)){
 		error = `ORDER value ${options.ORDER} must be in OPTIONS.COLUMNS`;
 		errors.push(error);
 		return false;
+	}else if(!hasOnlyDirAndKeys(options.ORDER)){
+		errors.push(`Invalid order object given : ${JSON.stringify(options.ORDER)}`);
+		return false;
+	}else if(options.ORDER.dir !== "UP" && options.ORDER.dir !== "DOWN"){
+		errors.push(`ORDER.dir must be one of UP and DOWN, found ${options.ORDER.dir} instead`);
+		return false;
+	}else if(!Array.isArray(options.ORDER.keys)){
+		errors.push("Order keys must be an array");
+		return false;
+	}else{
+		for(const key of options.ORDER.keys){
+			if(!options.COLUMNS.includes(key)){
+				errors.push("Keys in ORDER must be in COLUMNS");
+				return false;
+			}
+		}
 	}
+
 	return true;
 }
 // export type SFIELD = "dept" | "id" | "instructor" | "title" | "uuid";
