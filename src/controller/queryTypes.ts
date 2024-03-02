@@ -59,6 +59,19 @@ export interface Section {
 	fail: number;
 	audit: number;
 }
+export interface Room {
+    fullname: string; // Full building name
+    shortname: string; // Short building name
+    number: string; // Room number (represented as string)
+    name: string; // Room id (rooms_shortname + "_" + rooms_number)
+    address: string; // Building address
+    lat: number; // Latitude of the building
+    lon: number; // Longitude of the building
+    seats: number; // Number of seats in the room
+    type: string; // Room type
+    furniture: string; // Room furniture
+    href: string; // Link to the full details online
+}
 
 export interface PersistDataset extends InsightDataset {
 	data: Section[];
@@ -90,11 +103,11 @@ export interface ValidationResponse{
 export type APPLYKEY = string;
 export type GROUP = KEY[];
 export type APPLYTOKEN = "MAX" | "MIN" | "AVG" | "COUNT" | "SUM";
-export type APPLYRULE = Partial<{
-    [key in APPLYKEY]: Partial<{
+export type APPLYRULE = {
+    [key in APPLYKEY]: {
         [token in APPLYTOKEN]: KEY;
-    }>;
-}>;
+    };
+};
 export type APPLY = APPLYRULE[] ;
 export type ANYKEY = KEY | APPLYKEY;
 export interface ORDER {

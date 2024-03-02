@@ -23,7 +23,6 @@ import {validateIDString} from "./queryValidator";
  */
 export function validateTransformations(tf: TRANSFORMATIONS,columns: ANYKEY[], errors: string[],ids: string[]): boolean{
 	const apply = tf.APPLY;
-	const group = tf.GROUP;
 	if(!validateApply(apply,errors,ids)){
 		return false;
 	}else if(!validateGroup(tf,columns,errors,ids)){

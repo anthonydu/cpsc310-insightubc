@@ -8,12 +8,11 @@ import {QUERY,
 	SCOMPARISON,
 	SKEY, FILTER,
 	IDSTRING,
-	// SFIELD,
-	// MFIELD,
 	LOGICCOMPARISON,
 	LOGIC,
 	KEY
 } from "./queryTypes";
+import {validateTransformations} from "./transformationsValidators";
 
 function isValidJSON(jsonString: string,errors: string[]): boolean {
 
@@ -52,7 +51,10 @@ export function validateQuery(query: QUERY,errors: string[],ids: string[]): bool
 	if(!response){
 		return response;
 	}
-
+	response = validateTransformations(query.TRANSFORMATIONS,query.OPTIONS.COLUMNS,errors,ids);
+	if(!response){
+		return response;
+	}
 	return  true;
 }
 
