@@ -3,6 +3,7 @@ import {InsightError, InsightResult, ResultTooLargeError} from "./IInsightFacade
 import {validateQuery} from "./queryValidator";
 import * as fs from "fs-extra";
 import {FILTER_DATA, orderResults} from "./queryExecutor";
+import {executeTransformations} from "./aggregations";
 
 
 export class QueryManager {
@@ -50,6 +51,11 @@ export class QueryManager {
 			const firstError: string = this.errors[0];
 			return Promise.reject(new InsightError(firstError));
 		}
+		return this.handleFinalQuery(dataset);
+
+	}
+
+	public handleFinalQuery(dataset:  InsightResult[]):  Promise<InsightResult[]> {
 		const filter = this.query.WHERE;
 		// empty WHERE, get everything
 		if(Object.keys(filter).length === 0){
@@ -71,6 +77,10 @@ export class QueryManager {
 			}
 			orderResults(this.query.OPTIONS.ORDER,this.result);
 		}
+		if(this.query.TRANSFORMATIONS){
+			this.result = executeTransformations(this.query.TRANSFORMATIONS,this.result,this.query.OPTIONS.COLUMNS);
+		}
+
 		return Promise.resolve(this.result);
 	}
 

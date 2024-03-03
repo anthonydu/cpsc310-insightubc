@@ -46,24 +46,27 @@ function validateGroup(transformations: TRANSFORMATIONS,columns: ANYKEY[], error
 		return false;
 	}
 // If GROUP is present, all COLUMNS keys must correspond to one of the GROUP keys or to applykeys defined in the APPLY block.
+// Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present
 	const applyKeys = getApplyKeys(apply);
-	for(const gr of group){
-		if(!columns.includes(gr) && !applyKeys.includes(gr)){
-			errors.push("all COLUMNS keys must correspond to one of the GROUP keys or to applykeys");
+	for(const col of columns){
+		if(!group.includes(col as KEY) && !applyKeys.includes(col)){
+			errors.push("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present.");
 			return false;
 		}
 	}
-	return false;
+
+	return true;
 }
 
 
+// TODO: APPLY can be an empty array
 function validateApply(apply: APPLYRULE[],errors: string[],ids: string[]): boolean{
 	if(!Array.isArray(apply)){
-		errors.push("APPLY must be a list of Apply Rules ");
+		errors.push("APPLY must be a list of Apply Rules");
 		return false;
 	}else if(apply.length <= 0){
-		errors.push("APPLY must be a non-empty array");
-		return false;
+		// APPLY is allowed to be empty
+		return true;
 	}
 	const applyKeys: string[] = [];
 	// The applykey in an APPLYRULE should be unique, so no two APPLYRULEs should share an applykey with the same name.

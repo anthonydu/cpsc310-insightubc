@@ -44,7 +44,7 @@ export interface OPTIONS {
 export interface QUERY {
     WHERE: FILTER | Record<never,never>; // FILTER of an empty object
     OPTIONS: OPTIONS;
-	TRANSFORMATIONS: TRANSFORMATIONS
+	TRANSFORMATIONS?: TRANSFORMATIONS
 }
 
 export interface Section {

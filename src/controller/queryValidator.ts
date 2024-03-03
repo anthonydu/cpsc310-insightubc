@@ -51,9 +51,11 @@ export function validateQuery(query: QUERY,errors: string[],ids: string[]): bool
 	if(!response){
 		return response;
 	}
-	response = validateTransformations(query.TRANSFORMATIONS,query.OPTIONS.COLUMNS,errors,ids);
-	if(!response){
-		return response;
+	if(query.TRANSFORMATIONS !== null && query.TRANSFORMATIONS !== undefined){
+		response = validateTransformations(query.TRANSFORMATIONS,query.OPTIONS.COLUMNS,errors,ids);
+		if(!response){
+			return response;
+		}
 	}
 	return  true;
 }
