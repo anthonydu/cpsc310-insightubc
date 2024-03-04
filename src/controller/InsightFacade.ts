@@ -1,15 +1,16 @@
-
-import JSZip from "jszip";
 import * as fs from "fs-extra";
+import JSZip from "jszip";
 
-import {IInsightFacade,
+import {
+	IInsightFacade,
 	InsightDataset,
 	InsightDatasetKind,
-	InsightError, InsightResult,
-	NotFoundError} from "./IInsightFacade";
+	InsightError,
+	InsightResult,
+	NotFoundError,
+} from "./IInsightFacade";
 import {QueryManager} from "./queryManager";
-import {Section, PersistDataset} from "./queryTypes";
-
+import {PersistDataset, Section} from "./queryTypes";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -23,12 +24,11 @@ export default class InsightFacade implements IInsightFacade {
 		try {
 			return await fs.readJson(persistFile);
 		} catch {
-			// TODO possibly throw an error here
 			return [];
 		}
 	}
 
-	private async processData(sections: Section[],files: Array<Promise<string>>){
+	private async processData(sections: Section[], files: Array<Promise<string>>) {
 		for (const file of await Promise.all(files)) {
 			try {
 				JSON.parse(file);
@@ -37,15 +37,14 @@ export default class InsightFacade implements IInsightFacade {
 			}
 			const special: string = "overall";
 			for (const section of JSON.parse(file).result) {
-
 				sections.push({
 					uuid: String(section.id),
 					id: section.Course as string,
 					title: section.Title as string,
 					instructor: section.Professor as string,
 					dept: section.Subject as string,
-					year: section.Section === special ? 1900 : parseInt(section.Year,10),
-					avg: parseFloat(section.Avg) ,
+					year: section.Section === special ? 1900 : parseInt(section.Year, 10),
+					avg: parseFloat(section.Avg),
 					pass: parseInt(section.Pass, 10),
 					fail: parseInt(section.Fail, 10),
 					audit: parseInt(section.Audit, 10),
@@ -54,13 +53,13 @@ export default class InsightFacade implements IInsightFacade {
 		}
 	}
 
-	private static idInvalid(datasets: PersistDataset[], id: string) {
+	private static idInvalid(id: string) {
 		return id.includes("_") || id.trim() === "";
 	}
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 		let datasets: PersistDataset[] = await InsightFacade.readPersist();
-		if (InsightFacade.idInvalid(datasets, id) || datasets.some((dataset) => dataset.id === id)) {
+		if (InsightFacade.idInvalid(id) || datasets.some((dataset) => dataset.id === id)) {
 			throw new InsightError("Invalid id.");
 		}
 		if (kind !== InsightDatasetKind.Sections) {
@@ -77,28 +76,7 @@ export default class InsightFacade implements IInsightFacade {
 			for (const file of Object.values(courses.files)) {
 				files.push(file.async("string"));
 			}
-			// for (const file of await Promise.all(files)) {
-			// 	try {
-			// 		JSON.parse(file);
-			// 	} catch {
-			// 		continue;
-			// 	}
-			// 	for (const section of JSON.parse(file).result) {
-			// 		sections.push({
-			// 			uuid: section.id,
-			// 			id: section.Course,
-			// 			title: section.Title,
-			// 			instructor: section.Professor,
-			// 			dept: section.Subject,
-			// 			year: section.Year,
-			// 			avg: section.Avg,
-			// 			pass: section.Pass,
-			// 			fail: section.Fail,
-			// 			audit: section.Audit,
-			// 		});
-			// 	}
-			// }
-			await this.processData(sections,files);
+			await this.processData(sections, files);
 		} catch (e) {
 			throw new InsightError(e as string);
 		}
@@ -112,7 +90,7 @@ export default class InsightFacade implements IInsightFacade {
 
 	public async removeDataset(id: string): Promise<string> {
 		let datasets: PersistDataset[] = await InsightFacade.readPersist();
-		if (InsightFacade.idInvalid(datasets, id)) {
+		if (InsightFacade.idInvalid(id)) {
 			throw new InsightError("Invalid id.");
 		}
 		if (!datasets.some((dataset) => dataset.id === id)) {
@@ -126,7 +104,6 @@ export default class InsightFacade implements IInsightFacade {
 	public async performQuery(query: unknown): Promise<InsightResult[]> {
 		const queryManager: QueryManager = new QueryManager(query);
 		return queryManager.execute();
-
 	}
 
 	public async listDatasets(): Promise<InsightDataset[]> {
@@ -138,5 +115,3 @@ export default class InsightFacade implements IInsightFacade {
 		}));
 	}
 }
-
-
