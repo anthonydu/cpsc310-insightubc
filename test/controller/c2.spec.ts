@@ -46,6 +46,17 @@ function testAddDataset() {
 			await facade.addDataset("b", campus, InsightDatasetKind.Rooms);
 			return expect(facade.addDataset("c", campus, InsightDatasetKind.Rooms)).to.become(["a", "b", "c"]);
 		});
+		it("correctly adds dataset to disk", async () => {
+			await facade.addDataset("a", campus, InsightDatasetKind.Rooms);
+			const data = require("fs-extra").readJsonSync("data/datasets.json")[0].data;
+			const expected = readFileQueries("c2/valid").find((query) => query.title === "room all cols")?.expected;
+			for (const key in expected) {
+				// remove "rooms_" prefix
+				expected[key.substring(6)] = expected[key];
+				delete expected[key];
+			}
+			return expect(data).to.deep.members(expected);
+		});
 	});
 }
 function testListDatasets() {
