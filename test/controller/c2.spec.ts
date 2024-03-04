@@ -49,7 +49,9 @@ function testAddDataset() {
 		it("correctly adds dataset to disk", async () => {
 			await facade.addDataset("a", campus, InsightDatasetKind.Rooms);
 			const data = require("fs-extra").readJsonSync("data/datasets.json")[0].data;
-			const expected = readFileQueries("c2/valid").find((query) => query.title === "room all cols")?.expected;
+			const expected = readFileQueries("c2/valid").find(
+				(query) => query.title === "room all rows all cols"
+			)?.expected;
 			for (const key in expected) {
 				// remove "rooms_" prefix
 				expected[key.substring(6)] = expected[key];
