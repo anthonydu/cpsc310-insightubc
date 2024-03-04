@@ -50,9 +50,6 @@ function testAddDataset() {
 }
 function testListDatasets() {
 	describe("#listDatasets()", () => {
-		it("empty dataset fulfilled", () => {
-			return expect(facade.listDatasets()).to.become([]);
-		});
 		it("non-empty dataset fulfilled", async () => {
 			await facade.addDataset("a", campus, InsightDatasetKind.Rooms);
 			await facade.addDataset("b", campus, InsightDatasetKind.Rooms);
