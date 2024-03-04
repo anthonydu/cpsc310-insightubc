@@ -1,5 +1,6 @@
 import {Node, Element, TextNode} from "parse5/dist/tree-adapters/default";
 
+// Wrapper class for parse5 Node
 export class NodePlus {
 	private node: Node;
 
@@ -7,6 +8,7 @@ export class NodePlus {
 		this.node = node;
 	}
 
+	// Requires node to have text as its first child
 	public getText(): string {
 		const element = this.node as Element;
 		return (element.childNodes[0] as TextNode).value.trim();
@@ -20,6 +22,8 @@ export class NodePlus {
 		return attributes;
 	}
 
+	// My implementation of getElementsByClassName and getElementsByTagName using parse5
+	// Recursively searches through the DOM tree to find elements with the given class name or tag name
 	public getElementsBy(type: "className" | "tagName", value: string): NodePlus[] {
 		let results: NodePlus[] = [];
 		const element = this.node as Element;
