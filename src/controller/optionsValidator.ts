@@ -1,4 +1,4 @@
-import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY} from "./queryTypes";
+import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY,ORDER} from "./queryTypes";
 import {validateIDString, validateInputString} from "./queryValidator";
 
 export function validateOPTIONS(options: OPTIONS, errors: string[], ids: string[]): options is OPTIONS {
