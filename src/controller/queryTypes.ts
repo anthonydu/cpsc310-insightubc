@@ -70,6 +70,7 @@ export interface Building {
 	address: string;
 	lat: number;
 	lon: number;
+	href: string;
 }
 
 export interface Room extends Building {
@@ -78,7 +79,6 @@ export interface Room extends Building {
 	seats: number;
 	type: string;
 	furniture: string;
-	href: string;
 }
 
 export interface PersistDataset extends InsightDataset {
