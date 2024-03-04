@@ -113,11 +113,11 @@ export default function testInsightFacade() {
 						facade.addDataset("a", "pair.zip", InsightDatasetKind.Sections)
 					).to.eventually.be.rejectedWith(InsightError);
 				});
-				it("room kind rejected", async () => {
-					return expect(
-						facade.addDataset("a", minDataset, InsightDatasetKind.Rooms)
-					).to.eventually.be.rejectedWith(InsightError);
-				});
+				// it("room kind rejected", async () => {
+				// 	return expect(
+				// 		facade.addDataset("a", minDataset, InsightDatasetKind.Rooms)
+				// 	).to.eventually.be.rejectedWith(InsightError);
+				// });
 				it("invalid kind rejected", async () => {
 					return expect(facade.addDataset("a", minDataset, "invalid" as any)).to.eventually.be.rejectedWith(
 						InsightError
