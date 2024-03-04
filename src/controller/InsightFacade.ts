@@ -54,10 +54,10 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	// Given the content of index.htm, return a list of buildings
-	private static async parseBuildings(file: string): Promise<Building[]> {
+	private static async parseBuildings(html: string): Promise<Building[]> {
 		const buildings: Building[] = [];
 		try {
-			const document = new NodePlus(parse5(file));
+			const document = new NodePlus(parse5(html));
 			const tables = document.getElementsBy("tagName", "table");
 			const buildingTable = tables.filter((table) => {
 				return table.getElementsBy("className", "views-field-field-building-code").length > 0;
@@ -93,10 +93,10 @@ export default class InsightFacade implements IInsightFacade {
 
 	// Given the content of a building file, return a list of rooms
 	// The building object is used to fill in the building fields of the rooms
-	private static parseRoom(file: string, building: Building): Room[] {
+	private static parseRoom(html: string, building: Building): Room[] {
 		const rooms: Room[] = [];
 		try {
-			const document = new NodePlus(parse5(file));
+			const document = new NodePlus(parse5(html));
 			const tables = document.getElementsBy("tagName", "table");
 			const roomTable = tables.filter((table) => {
 				return table.getElementsBy("className", "views-field-field-room-number").length > 0;
@@ -126,11 +126,11 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	// Given a list of json file strings, return a list of sections
-	private static parseSections(files: string[]): Section[] {
+	private static parseSections(jsons: string[]): Section[] {
 		const sections: Section[] = [];
-		for (const file of files) {
+		for (const json of jsons) {
 			try {
-				for (const section of JSON.parse(file).result) {
+				for (const section of JSON.parse(json).result) {
 					sections.push({
 						uuid: String(section.id),
 						id: section.Course as string,
@@ -153,11 +153,11 @@ export default class InsightFacade implements IInsightFacade {
 
 	// Given the content of a zip file, return a list of sections
 	// Uses parseSections to parse the json files in the zip
-	private static async processSections(content: string): Promise<Section[]> {
+	private static async processSections(zipContent: string): Promise<Section[]> {
 		const zip = new JSZip();
 		let sections: Section[];
 		try {
-			const courses = await zip.loadAsync(content, {base64: true});
+			const courses = await zip.loadAsync(zipContent, {base64: true});
 			if (!courses.files["courses/"]) {
 				throw new InsightError("No courses folder.");
 			}
@@ -167,7 +167,7 @@ export default class InsightFacade implements IInsightFacade {
 			}
 			sections = await this.parseSections(await Promise.all(files));
 		} catch (e) {
-			throw new InsightError(e as string);
+			throw new InsightError(`Process sections failed: ${e}`);
 		}
 		if (sections.length === 0) {
 			throw new InsightError("No valid sections.");
@@ -178,11 +178,11 @@ export default class InsightFacade implements IInsightFacade {
 	// Given the base64 content of a zip file, return a list of rooms
 	// Uses parseBuildings to parse the index.htm file in the zip
 	// Uses parseRoom to parse the building files in the zip (only files linked from index.htm are parsed)
-	private static async processRooms(content: string): Promise<Room[]> {
+	private static async processRooms(zipContent: string): Promise<Room[]> {
 		const zip = new JSZip();
 		let rooms: Room[][] = [];
 		try {
-			const campus = await zip.loadAsync(content, {base64: true});
+			const campus = await zip.loadAsync(zipContent, {base64: true});
 			if (!campus.file("index.htm")) {
 				throw new InsightError("No index.htm file.");
 			}
@@ -201,7 +201,7 @@ export default class InsightFacade implements IInsightFacade {
 				})
 			);
 		} catch (e) {
-			throw new InsightError(e as string);
+			throw new InsightError(`Process rooms failed: ${e}`);
 		}
 		if (rooms.length === 0) {
 			throw new InsightError("No valid rooms.");
@@ -221,8 +221,10 @@ export default class InsightFacade implements IInsightFacade {
 		let data: Section[] | Room[];
 		if (kind === InsightDatasetKind.Sections) {
 			data = await InsightFacade.processSections(content);
-		} else {
+		} else if (kind === InsightDatasetKind.Rooms) {
 			data = await InsightFacade.processRooms(content);
+		} else {
+			throw new InsightError("Invalid kind.");
 		}
 		datasets.push({id, kind, numRows: data.length, data});
 		await fs.outputJSON(persistFile, datasets);
