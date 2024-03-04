@@ -58,8 +58,31 @@ export interface Section {
 	audit: number;
 }
 
+export interface GeoResponse {
+	lat?: number;
+	lon?: number;
+	error?: string;
+}
+
+export interface Building {
+	fullname: string;
+	shortname: string;
+	address: string;
+	lat: number;
+	lon: number;
+}
+
+export interface Room extends Building {
+	number: string;
+	name: string;
+	seats: number;
+	type: string;
+	furniture: string;
+	href: string;
+}
+
 export interface PersistDataset extends InsightDataset {
-	data: Section[];
+	data: Section[] | Room[];
 }
 
 export interface ValidationResponse {
