@@ -16,12 +16,12 @@ export type KEYLIST = KEY [];
 export type DIRECTION = "UP" | "DOWN";
 
 export interface SCOMPARISON {
-    IS: {
-        [skey in SKEY]: string;
-    };
+	IS: {
+		[skey in SKEY]: string;
+	};
 }
 export interface NEGATION {
-    NOT: FILTER;
+	NOT: FILTER;
 }
 
 export type LOGICCOMPARISON = Partial<{
@@ -29,9 +29,9 @@ export type LOGICCOMPARISON = Partial<{
 }>;
 
 export type MCOMPARISON = Partial<{
-    [comparator in MCOMPARATOR]: Partial<{
-        [mkey in MKEY]: number;
-    }>;
+	[comparator in MCOMPARATOR]: Partial<{
+		[mkey in MKEY]: number;
+	}>;
 }>;
 
 export type FILTER = LOGICCOMPARISON | MCOMPARISON | SCOMPARISON | NEGATION;
@@ -59,27 +59,37 @@ export interface Section {
 	fail: number;
 	audit: number;
 }
-export interface Room {
-    fullname: string; // Full building name
-    shortname: string; // Short building name
-    number: string; // Room number (represented as string)
-    name: string; // Room id (rooms_shortname + "_" + rooms_number)
-    address: string; // Building address
-    lat: number; // Latitude of the building
-    lon: number; // Longitude of the building
-    seats: number; // Number of seats in the room
-    type: string; // Room type
-    furniture: string; // Room furniture
-    href: string; // Link to the full details online
+
+export interface GeoResponse {
+	lat?: number;
+	lon?: number;
+	error?: string;
+}
+
+export interface Building {
+	fullname: string;
+	shortname: string;
+	address: string;
+	lat: number;
+	lon: number;
+	href: string;
+}
+
+export interface Room extends Building {
+	number: string;
+	name: string;
+	seats: number;
+	type: string;
+	furniture: string;
 }
 
 export interface PersistDataset extends InsightDataset {
-	data: Section[];
+	data: Section[] | Room[];
 }
 
-export interface ValidationResponse{
-	valid: boolean,
-	error?: string
+export interface ValidationResponse {
+	valid: boolean;
+	error?: string;
 }
 
 

@@ -1,68 +1,55 @@
-import {// QUERY,
-	// MCOMPARATOR,
-	// MCOMPARISON,
-	MKEY,
-	// SCOMPARISON,
-	SKEY,
-	// FILTER,
-	IDSTRING,
-	SFIELD,
-	MFIELD,
-	OPTIONS,
-	ORDER
-} from "./queryTypes";
+import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY} from "./queryTypes";
 import {validateIDString, validateInputString} from "./queryValidator";
 
-export function validateOPTIONS(options: OPTIONS,errors: string[],ids: string[]): options is OPTIONS{
+export function validateOPTIONS(options: OPTIONS, errors: string[], ids: string[]): options is OPTIONS {
 	let error: string;
-	if(!options){
+	if (!options) {
 		error = "Invalid type for OPTIONS, expected an object";
 		errors.push(error);
 		return false;
 	}
-	if(!options.COLUMNS || !Array.isArray(options.COLUMNS)){
+	if (!options.COLUMNS || !Array.isArray(options.COLUMNS)) {
 		error = "OPTIONS missing COLUMNS";
 		errors.push(error);
 		return false;
 	}
 	const columns: string[] = options.COLUMNS;
-	if(columns.length < 1){
+	if (columns.length < 1) {
 		error = "COLUMNS must not be empty";
 		errors.push(error);
 		return false;
 	}
-	for(const column of columns){
-
+	for (const column of columns) {
 		const delimiter = "_";
 		const parts = column.split(delimiter);
 		const requiredLength: number = 2;
 
-		if(parts.length < requiredLength ){
+		if (parts.length < requiredLength) {
 			error = `${column} is not a valid column option`;
 			errors.push(error);
 			return false;
 		}
 		ids.push(parts[0]);
-		const mkfields: string[] = ["avg", "pass","fail","audit","year"] ;
-		const sfields: string[] = ["dept","id" ,"instructor" ,"title" , "uuid"];
-		if(!mkfields.includes(parts[1]) && !sfields.includes(parts[1])){
+		const mkfields: string[] = ["avg", "pass", "fail", "audit", "year"];
+		const sfields: string[] = ["dept", "id", "instructor", "title", "uuid"];
+		if (!mkfields.includes(parts[1]) && !sfields.includes(parts[1])) {
 			errors.push(`invalid skey or mkey found- ${parts[1]}`);
 			return false;
 		}
-		if(mkfields.includes(parts[1])){
-			const mkeyvalid = validateMkey(column as MKEY,errors,ids);
-			if(!mkeyvalid){
+		if (mkfields.includes(parts[1])) {
+			const mkeyvalid = validateMkey(column as MKEY, errors, ids);
+			if (!mkeyvalid) {
 				return false;
 			}
 		}
-		if(sfields.includes(parts[1])){
-			const skeyvalid = validateSkey(column as SKEY,errors,ids);
-			if(!skeyvalid){
+		if (sfields.includes(parts[1])) {
+			const skeyvalid = validateSkey(column as SKEY, errors, ids);
+			if (!skeyvalid) {
 				return false;
 			}
 		}
 	}
-	return validateORDER(options,columns,errors);
+	return validateORDER(options, columns, errors);
 }
 
 function hasOnlyDirAndKeys(obj: any): obj is ORDER {
@@ -77,7 +64,6 @@ function validateORDER(options: OPTIONS,columns: string[],errors: string[]){
 	if(!options.ORDER){
 		errors.push(`Invalid ORDER key ${Object.keys(options)[1]}`);
 		return false;
-
 	}
 	if(typeof options.ORDER === "string" && !validateInputString(options.ORDER,errors)){
 		return false;
@@ -106,24 +92,23 @@ function validateORDER(options: OPTIONS,columns: string[],errors: string[]){
 	return true;
 }
 // export type SFIELD = "dept" | "id" | "instructor" | "title" | "uuid";
-export function validateSfield(sfield: SFIELD,errors: string[]): sfield is SFIELD {
+export function validateSfield(sfield: SFIELD, errors: string[]): sfield is SFIELD {
 	let error: string;
-	const possibleValues: string[] = ["dept", "id" , "instructor" ,"title" , "uuid"];
-	if(!possibleValues.includes(sfield as string)){
+	const possibleValues: string[] = ["dept", "id", "instructor", "title", "uuid"];
+	if (!possibleValues.includes(sfield as string)) {
 		error = `invalid sfield value ${sfield}, should be one of ["dept", "id" , "instructor" ,"title" , "uuid"]`;
 		errors.push(error);
 		return false;
-
 	}
 	return true;
 }
 
 // export type MFIELD= "avg" | "pass" | "fail" | "audit" | "year";
-export function validateMfield(mfield: MFIELD,errors: string[]): mfield is MFIELD {
-	const possibleValues = ["avg","pass","fail","audit","year"];
+export function validateMfield(mfield: MFIELD, errors: string[]): mfield is MFIELD {
+	const possibleValues = ["avg", "pass", "fail", "audit", "year"];
 	let error: string;
 
-	if(!possibleValues.includes(mfield as string)){
+	if (!possibleValues.includes(mfield as string)) {
 		error = `invalid sfield value ${mfield}, should be one of  ["avg","pass","fail","audit","year"]`;
 		errors.push(error);
 		return false;
@@ -132,33 +117,31 @@ export function validateMfield(mfield: MFIELD,errors: string[]): mfield is MFIEL
 }
 
 // export type SKEY = `"${IDSTRING}_${SFIELD}"`;
-export function validateSkey(skey: SKEY,errors: string[],ids: string[]): skey is SKEY {
+export function validateSkey(skey: SKEY, errors: string[], ids: string[]): skey is SKEY {
 	let error: string;
 	const delimiter = "_";
 	const parts = skey.split(delimiter);
 	const requiredLength: number = 2;
-	if(parts.length !== requiredLength){
+	if (parts.length !== requiredLength) {
 		error = `invalid skey ${skey}`;
 		errors.push(error);
 		return false;
 	}
 	ids.push(parts[0]);
-	return validateIDString(parts[0] as IDSTRING,errors,ids) && validateSfield(parts[1] as SFIELD,errors);
+	return validateIDString(parts[0] as IDSTRING, errors, ids) && validateSfield(parts[1] as SFIELD, errors);
 }
 
 // export type MKEY = `"${IDSTRING}_${MFIELD}"`;
-export function validateMkey(mkey: MKEY,errors: string[],ids: string[]): boolean {
+export function validateMkey(mkey: MKEY, errors: string[], ids: string[]): boolean {
 	const delimiter = "_";
 	const parts = mkey.split(delimiter);
 	const requiredLength: number = 2;
-	if(parts.length !== requiredLength){
+	if (parts.length !== requiredLength) {
 		let error: string;
 		error = `invalid mkey ${mkey}`;
 		errors.push(error);
 		return false;
 	}
 	ids.push(parts[0]);
-	return validateIDString(parts[0],errors,ids) && validateMfield(parts[1] as MFIELD,errors);
+	return validateIDString(parts[0], errors, ids) && validateMfield(parts[1] as MFIELD, errors);
 }
-
-
