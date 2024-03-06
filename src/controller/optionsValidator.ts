@@ -1,78 +1,119 @@
-import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY} from "./queryTypes";
+import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY,ORDER,skeys, mkeys, QUERY, KEY} from "./queryTypes";
 import {validateIDString, validateInputString} from "./queryValidator";
+import {getApplyKeys} from "./transformationsValidators";
 
-export function validateOPTIONS(options: OPTIONS, errors: string[], ids: string[]): options is OPTIONS {
+export function validateOPTIONS(query: QUERY, errors: string[], ids: string[]): boolean {
+	const options: OPTIONS = query.OPTIONS;
+	const transformations = query.TRANSFORMATIONS;
 	let error: string;
 	if (!options) {
 		error = "Invalid type for OPTIONS, expected an object";
 		errors.push(error);
 		return false;
 	}
-	if (!options.COLUMNS || !Array.isArray(options.COLUMNS)) {
-		error = "OPTIONS missing COLUMNS";
-		errors.push(error);
+	const columnsValid = validateCOLUMNS(query,errors,ids);
+	if(!columnsValid){
 		return false;
 	}
+	return validateORDER(options, options.COLUMNS, errors);
+}
+function validateCOLUMNS(query: QUERY,errors: string[],ids: string[]){
+	const options: OPTIONS = query.OPTIONS;
+	const tf = query.TRANSFORMATIONS;
 	const columns: string[] = options.COLUMNS;
-	if (columns.length < 1) {
-		error = "COLUMNS must not be empty";
-		errors.push(error);
+	if (!columns || !Array.isArray(columns) || columns.length < 1) {
+		errors.push("COLUMNS must be an non empty array");
 		return false;
 	}
 	for (const column of columns) {
 		const delimiter = "_";
 		const parts = column.split(delimiter);
 		const requiredLength: number = 2;
+		let applyKeys: string[] = [] as string[];
 
-		if (parts.length < requiredLength) {
-			error = `${column} is not a valid column option`;
-			errors.push(error);
+		// Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present
+		if(tf?.APPLY !== undefined && tf.APPLY !== null){
+			applyKeys = getApplyKeys(tf?.APPLY);
+			if(!tf.GROUP.includes(column as KEY) && !applyKeys.includes(column)){
+				errors.push("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present.");
+				return false;
+			}
+		}
+
+		// a column name that is cannot be split on _ must be in applykeys to be valid
+		if (parts.length < requiredLength && !applyKeys.includes(column)) {
+			errors.push(`${column} is not a valid column option`);
 			return false;
 		}
 		ids.push(parts[0]);
-		const mkfields: string[] = ["avg", "pass", "fail", "audit", "year"];
-		const sfields: string[] = ["dept", "id", "instructor", "title", "uuid"];
-		if (!mkfields.includes(parts[1]) && !sfields.includes(parts[1])) {
+		if (!mkeys.includes(parts[1]) && !skeys.includes(parts[1])) {
 			errors.push(`invalid skey or mkey found- ${parts[1]}`);
 			return false;
 		}
-		if (mkfields.includes(parts[1])) {
+		if (mkeys.includes(parts[1])) {
 			const mkeyvalid = validateMkey(column as MKEY, errors, ids);
 			if (!mkeyvalid) {
 				return false;
 			}
 		}
-		if (sfields.includes(parts[1])) {
+		if (skeys.includes(parts[1])) {
 			const skeyvalid = validateSkey(column as SKEY, errors, ids);
 			if (!skeyvalid) {
 				return false;
 			}
 		}
 	}
-	return validateORDER(options, columns, errors);
-}
-function validateORDER(options: OPTIONS, columns: string[], errors: string[]) {
-	let error: string;
-	if (!options.ORDER && Object.keys(options).length > 1) {
-		errors.push(`Invalid ORDER key ${Object.keys(options)[1]}`);
-		return false;
-	}
-	if (options.ORDER && !validateInputString(options.ORDER, errors)) {
-		return false;
-	}
+	return true;
 
-	if (options.ORDER && !columns.includes(options.ORDER as string)) {
+}
+function hasOnlyDirAndKeys(obj: any): obj is ORDER {
+	return typeof obj === "object" &&
+           obj !== null &&
+           "dir" in obj &&
+           "keys" in obj &&
+           Object.keys(obj).length === 2; // Ensure no extra properties
+}
+function validateORDER(options: OPTIONS,columns: string[],errors: string[]){
+	let error: string;
+	if(!options.ORDER){
+		errors.push(`Invalid ORDER key ${Object.keys(options)[1]}`);
+		errors.push("Order key must be in columns");
+		return false;
+	}
+	if(typeof options.ORDER === "string" && columns.includes(options.ORDER)){
+		return false;
+	}
+	if(typeof options.ORDER === "string" && !validateInputString(options.ORDER,errors)){
+		return false;
+	}else if(typeof options.ORDER === "string" && !columns.includes(options.ORDER as string)){
 		error = `ORDER value ${options.ORDER} must be in OPTIONS.COLUMNS`;
 		errors.push(error);
 		return false;
+	}else if(typeof options.ORDER !== "string" && !hasOnlyDirAndKeys(options.ORDER)){
+		errors.push(`Invalid order object given : ${JSON.stringify(options.ORDER)}`);
+		return false;
+	}else if(typeof options.ORDER !== "string" && options.ORDER.dir !== "UP" && options.ORDER.dir !== "DOWN"){
+		errors.push(`ORDER.dir must be one of UP and DOWN, found ${options.ORDER.dir} instead`);
+		return false;
+	}else if(typeof options.ORDER !== "string" && !Array.isArray(options.ORDER.keys)){
+		errors.push("Order keys must be an array");
+		return false;
+	}else if(typeof options.ORDER !== "string"){
+		for(const key of options.ORDER.keys){
+			if(!options.COLUMNS.includes(key)){
+				errors.push("Keys in ORDER must be in COLUMNS");
+				return false;
+			}
+		}
 	}
+
 	return true;
 }
-// export type SFIELD = "dept" | "id" | "instructor" | "title" | "uuid";
+
 export function validateSfield(sfield: SFIELD, errors: string[]): sfield is SFIELD {
 	let error: string;
-	const possibleValues: string[] = ["dept", "id", "instructor", "title", "uuid"];
-	if (!possibleValues.includes(sfield as string)) {
+
+	if (!skeys.includes(sfield as string)) {
 		error = `invalid sfield value ${sfield}, should be one of ["dept", "id" , "instructor" ,"title" , "uuid"]`;
 		errors.push(error);
 		return false;
@@ -80,12 +121,12 @@ export function validateSfield(sfield: SFIELD, errors: string[]): sfield is SFIE
 	return true;
 }
 
-// export type MFIELD= "avg" | "pass" | "fail" | "audit" | "year";
+
 export function validateMfield(mfield: MFIELD, errors: string[]): mfield is MFIELD {
-	const possibleValues = ["avg", "pass", "fail", "audit", "year"];
+
 	let error: string;
 
-	if (!possibleValues.includes(mfield as string)) {
+	if (!mkeys.includes(mfield as string)) {
 		error = `invalid sfield value ${mfield}, should be one of  ["avg","pass","fail","audit","year"]`;
 		errors.push(error);
 		return false;

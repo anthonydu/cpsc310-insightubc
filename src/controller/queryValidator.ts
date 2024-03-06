@@ -12,6 +12,7 @@ import {
 	SCOMPARISON,
 	SKEY,
 } from "./queryTypes";
+import {validateTransformations} from "./transformationsValidators";
 
 function isValidJSON(jsonString: string, errors: string[]): boolean {
 	try {
@@ -42,12 +43,17 @@ export function validateQuery(query: QUERY, errors: string[], ids: string[]): bo
 	if (!response) {
 		return response;
 	}
-	response = validateOPTIONS(parsedQuery.OPTIONS, errors, ids);
+	response = validateOPTIONS(parsedQuery, errors, ids);
 	if (!response) {
 		return response;
 	}
-
-	return true;
+	if(query.TRANSFORMATIONS !== null && query.TRANSFORMATIONS !== undefined){
+		response = validateTransformations(query.TRANSFORMATIONS,query.OPTIONS.COLUMNS,errors,ids);
+		if(!response){
+			return response;
+		}
+	}
+	return  true;
 }
 
 function isValidMComparator(mcomp: MCOMPARATOR, errors: string[], ids: string[]): mcomp is MCOMPARATOR {

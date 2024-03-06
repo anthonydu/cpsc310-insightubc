@@ -1,8 +1,10 @@
 import * as fs from "fs-extra";
 import {InsightError, InsightResult, ResultTooLargeError} from "./IInsightFacade";
 import {FILTER_DATA, orderResults} from "./queryExecutor";
-import {FILTER, QUERY, Section} from "./queryTypes";
+import {FILTER, QUERY, Section,mkeys} from "./queryTypes";
 import {validateQuery} from "./queryValidator";
+import {executeTransformations} from "./aggregations";
+
 
 export class QueryManager {
 	private query: QUERY;
@@ -49,6 +51,11 @@ export class QueryManager {
 			const firstError: string = this.errors[0];
 			return Promise.reject(new InsightError(firstError));
 		}
+		return this.handleFinalQuery(dataset);
+
+	}
+
+	public handleFinalQuery(dataset:  InsightResult[]):  Promise<InsightResult[]> {
 		const filter = this.query.WHERE;
 		// empty WHERE, get everything
 		if (Object.keys(filter).length === 0) {
@@ -64,22 +71,28 @@ export class QueryManager {
 		if (this.result.length > this.QUERY_MAX) {
 			return Promise.reject(new ResultTooLargeError("Result too large"));
 		}
-		if (this.query.OPTIONS.ORDER) {
-			if (!this.query.OPTIONS.COLUMNS.includes(this.query.OPTIONS.ORDER)) {
-				return Promise.reject(new InsightError("Order key not in columns"));
-			}
-			orderResults(this.query.OPTIONS.ORDER, this.result);
+		if(this.query.TRANSFORMATIONS){
+			this.result = executeTransformations(this.query.TRANSFORMATIONS,this.result,this.query.OPTIONS.COLUMNS);
 		}
+		if (this.query.OPTIONS.ORDER) {
+			// if (!this.query.OPTIONS.COLUMNS.includes(this.query.OPTIONS.ORDER)) {
+			// 	return Promise.reject(new InsightError("Order key not in columns"));
+			// }
+			orderResults(this.query.OPTIONS.ORDER,this.result);
+		}
+
 		return Promise.resolve(this.result);
 	}
 
 	public getColumns(section: InsightResult): InsightResult {
 		const columns: string[] = this.query.OPTIONS.COLUMNS;
 		let res: InsightResult = {};
-		const numericFields = ["avg", "pass", "fail", "audit", "year"];
 		for (const col of columns) {
 			const parts = col.split("_");
-			if (numericFields.includes(parts[1])) {
+			if(parts.length < 2){
+				res[col] = section[col] as number; // handling column names that are apply keys
+			}
+			if (mkeys.includes(parts[1])) {
 				res[col] = section[parts[1]] as number;
 			} else {
 				res[col] = section[parts[1]];
@@ -133,4 +146,13 @@ export class QueryManager {
 			throw new InsightError("Error reading data");
 		}
 	}
+
+	public groupBy(){
+		return null;
+	}
+
+	public apply(){
+		return null;
+	}
+
 }
