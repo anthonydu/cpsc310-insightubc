@@ -15,8 +15,8 @@ import {clearDisk, getContentFromArchives, readFileQueries} from "../TestUtil";
 
 import fs from "fs-extra";
 
-// const validQueries = readFileQueries("c2/valid");
-// const invalidQueries = readFileQueries("c2/invalid");
+const validQueries = readFileQueries("c2/valid");
+const invalidQueries = readFileQueries("c2/invalid");
 
 let facade: IInsightFacade;
 let campus: string;

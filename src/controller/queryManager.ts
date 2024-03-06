@@ -75,9 +75,10 @@ export class QueryManager {
 			this.result = executeTransformations(this.query.TRANSFORMATIONS,this.result,this.query.OPTIONS.COLUMNS);
 		}
 		if (this.query.OPTIONS.ORDER) {
-			// if (!this.query.OPTIONS.COLUMNS.includes(this.query.OPTIONS.ORDER)) {
-			// 	return Promise.reject(new InsightError("Order key not in columns"));
-			// }
+			if (typeof this.query.OPTIONS.ORDER === "string" &&
+			!this.query.OPTIONS.COLUMNS.includes(this.query.OPTIONS.ORDER)) {
+				return Promise.reject(new InsightError("Order key not in columns"));
+			}
 			orderResults(this.query.OPTIONS.ORDER,this.result);
 		}
 
