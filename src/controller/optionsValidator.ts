@@ -1,4 +1,4 @@
-import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY,ORDER} from "./queryTypes";
+import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY,ORDER,skeys, mkeys} from "./queryTypes";
 import {validateIDString, validateInputString} from "./queryValidator";
 
 export function validateOPTIONS(options: OPTIONS, errors: string[], ids: string[]): options is OPTIONS {
@@ -30,19 +30,17 @@ export function validateOPTIONS(options: OPTIONS, errors: string[], ids: string[
 			return false;
 		}
 		ids.push(parts[0]);
-		const mkfields: string[] = ["avg", "pass", "fail", "audit", "year"];
-		const sfields: string[] = ["dept", "id", "instructor", "title", "uuid"];
-		if (!mkfields.includes(parts[1]) && !sfields.includes(parts[1])) {
+		if (!mkeys.includes(parts[1]) && !skeys.includes(parts[1])) {
 			errors.push(`invalid skey or mkey found- ${parts[1]}`);
 			return false;
 		}
-		if (mkfields.includes(parts[1])) {
+		if (mkeys.includes(parts[1])) {
 			const mkeyvalid = validateMkey(column as MKEY, errors, ids);
 			if (!mkeyvalid) {
 				return false;
 			}
 		}
-		if (sfields.includes(parts[1])) {
+		if (skeys.includes(parts[1])) {
 			const skeyvalid = validateSkey(column as SKEY, errors, ids);
 			if (!skeyvalid) {
 				return false;
@@ -91,11 +89,11 @@ function validateORDER(options: OPTIONS,columns: string[],errors: string[]){
 
 	return true;
 }
-// export type SFIELD = "dept" | "id" | "instructor" | "title" | "uuid";
+
 export function validateSfield(sfield: SFIELD, errors: string[]): sfield is SFIELD {
 	let error: string;
-	const possibleValues: string[] = ["dept", "id", "instructor", "title", "uuid"];
-	if (!possibleValues.includes(sfield as string)) {
+
+	if (!skeys.includes(sfield as string)) {
 		error = `invalid sfield value ${sfield}, should be one of ["dept", "id" , "instructor" ,"title" , "uuid"]`;
 		errors.push(error);
 		return false;
@@ -103,12 +101,12 @@ export function validateSfield(sfield: SFIELD, errors: string[]): sfield is SFIE
 	return true;
 }
 
-// export type MFIELD= "avg" | "pass" | "fail" | "audit" | "year";
+
 export function validateMfield(mfield: MFIELD, errors: string[]): mfield is MFIELD {
-	const possibleValues = ["avg", "pass", "fail", "audit", "year"];
+
 	let error: string;
 
-	if (!possibleValues.includes(mfield as string)) {
+	if (!mkeys.includes(mfield as string)) {
 		error = `invalid sfield value ${mfield}, should be one of  ["avg","pass","fail","audit","year"]`;
 		errors.push(error);
 		return false;
