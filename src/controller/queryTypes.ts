@@ -146,3 +146,4 @@ export const mkeys = ["avg","pass","fail","audit","year","lat","lon","seats"];
 export const skeys = ["dept","id","instructor","title","uuid","fullname",
 	"shortname","number","name","address","type","furniture","href"];
 export const applyTokens = ["MAX","MIN","SUM","COUNT","AVG"];
+export type  Item = Section|Room;
