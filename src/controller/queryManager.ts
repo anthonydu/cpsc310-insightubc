@@ -1,7 +1,7 @@
 import * as fs from "fs-extra";
 import {InsightError, InsightResult, ResultTooLargeError} from "./IInsightFacade";
 import {FILTER_DATA, orderResults} from "./queryExecutor";
-import {FILTER, QUERY, Section} from "./queryTypes";
+import {FILTER, QUERY, Section,mkeys} from "./queryTypes";
 import {validateQuery} from "./queryValidator";
 import {executeTransformations} from "./aggregations";
 
@@ -87,10 +87,9 @@ export class QueryManager {
 	public getColumns(section: InsightResult): InsightResult {
 		const columns: string[] = this.query.OPTIONS.COLUMNS;
 		let res: InsightResult = {};
-		const numericFields = ["avg", "pass", "fail", "audit", "year"];
 		for (const col of columns) {
 			const parts = col.split("_");
-			if (numericFields.includes(parts[1])) {
+			if (mkeys.includes(parts[1])) {
 				res[col] = section[parts[1]] as number;
 			} else {
 				res[col] = section[parts[1]];
