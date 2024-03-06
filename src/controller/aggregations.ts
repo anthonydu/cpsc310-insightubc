@@ -5,8 +5,6 @@ import Decimal from "decimal.js";
 
 function MIN(group: InsightResult[],applyRule: APPLYRULE): number{
 	const minObj =  Object.values(applyRule)[0];
-	// const applykey: string = Object.keys(applyRule)[0];
-	// const finalObj: Record<string, number> = {};
 	const field = minObj?.MIN.toString();
 	const firstItem = group[0];
 
@@ -16,14 +14,13 @@ function MIN(group: InsightResult[],applyRule: APPLYRULE): number{
 		const value: number = Number.parseInt(item[field] as string, 10);
 		minimum = Math.min(minimum,value);
 	}
-	// finalObj[applykey] = minimum;
+
 	return minimum;
 }
 
 function MAX(group: InsightResult[],applyRule: APPLYRULE): number{
 	const maxObj =  Object.values(applyRule)[0];
-	// const applykey = Object.keys(applyRule)[0];
-	// let finalObj: Record<string, number> = {};
+
 	const field = maxObj?.MAX.toString();
 	const firstItem = group[0];
 	let maximum: number = Number.parseInt(firstItem[field] as string, 10);
@@ -31,14 +28,13 @@ function MAX(group: InsightResult[],applyRule: APPLYRULE): number{
 		const value: number = Number.parseInt(item[field] as string, 10);
 		maximum = Math.max(maximum,value);
 	}
-	// finalObj[applykey] = maximum;
+
 	return maximum;
 }
 
 function AVG(group: InsightResult[],applyRule: APPLYRULE): number{
 	const avgObj =  Object.values(applyRule)[0];
-	// const applykey = Object.keys(applyRule)[0];
-	// let finalObj: Record<string, number> = {};
+
 	const field = avgObj?.AVG.toString();
 	let total: Decimal = new Decimal(0);
 	let count = group.length;
@@ -49,14 +45,13 @@ function AVG(group: InsightResult[],applyRule: APPLYRULE): number{
 	}
 
 	const avg =  total.toNumber() / count;
-	// finalObj[applykey] = Number(avg.toFixed(2));
+
 	return Number(avg.toFixed(2));
 }
 
 function SUM(group: InsightResult[],applyRule: APPLYRULE): number{
 	const sumObj =  Object.values(applyRule)[0];
-	// const applykey = Object.keys(applyRule)[0];
-	// let finalObj: Record<string, number> = {};
+
 	const field = sumObj?.SUM.toString();
 
 	let sum: number = 0;
@@ -65,25 +60,21 @@ function SUM(group: InsightResult[],applyRule: APPLYRULE): number{
 		sum += value;
 	}
 
-	// finalObj[applykey] =  Number(sum.toFixed(2));
+
 	return Number(sum.toFixed(2));
 }
 function COUNT(group: InsightResult[],applyRule: APPLYRULE): number{
 
 	const countObj =  Object.values(applyRule)[0];
-	// const applykey = Object.keys(applyRule)[0];
-	// let finalObj: Record<string, number> = {};
+
 	const field = countObj?.COUNT.toString();
 	const set = new Set();
 	for(const item of group){
 		const value = item[field];
 		set.add(value);
 	}
-	// finalObj[applykey] = set.size;
+
 	return set.size;
-}
-function ORDER(result: InsightResult[],order: any){
-	return;
 }
 
 export function EXECUTE_GROUP(items: InsightResult[],groupers: GROUP): InsightResult[][]{
@@ -112,6 +103,7 @@ function EXUCUTE_APPLY(groups: InsightResult[][],apply: APPLY,
 
 	let item;
 	const results: InsightResult[] = [];
+
 	for(const group of groups){
 		// In each group, the values of each keys in GROUP are the same for all elements
 		// We want to pass those values to the final returned object
@@ -158,6 +150,12 @@ function executeGroupApply(group: InsightResult[],apply: APPLY,
  */
 export function executeTransformations(transformations: TRANSFORMATIONS, results: InsightResult[],columns: ANYKEY[]){
 	const groups = EXECUTE_GROUP(results,transformations.GROUP );
+	if(transformations.APPLY.length <= 0){
+
+		return groups.flat();
+
+	}
+
 	const finalResults = EXUCUTE_APPLY(groups,transformations.APPLY,transformations.GROUP,columns);
 
 	return finalResults;
