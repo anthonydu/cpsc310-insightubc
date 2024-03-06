@@ -13,6 +13,8 @@ import chaiAsPromised from "chai-as-promised";
 
 import {clearDisk, getContentFromArchives, readFileQueries} from "../TestUtil";
 
+import fs from "fs-extra";
+
 // const validQueries = readFileQueries("c2/valid");
 // const invalidQueries = readFileQueries("c2/invalid");
 
@@ -48,7 +50,7 @@ function testAddDataset() {
 		});
 		it("correctly adds dataset to disk", async () => {
 			await facade.addDataset("a", campus, InsightDatasetKind.Rooms);
-			const data = require("fs-extra").readJsonSync("data/datasets.json")[0].data;
+			const data = fs.readJsonSync("data/datasets.json")[0].data;
 			const expected = readFileQueries("c2/valid").find(
 				(query) => query.title === "room all rows all cols"
 			)?.expected;
