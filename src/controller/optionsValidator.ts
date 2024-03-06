@@ -77,6 +77,10 @@ function validateORDER(options: OPTIONS,columns: string[],errors: string[]){
 	let error: string;
 	if(!options.ORDER){
 		errors.push(`Invalid ORDER key ${Object.keys(options)[1]}`);
+		errors.push("Order key must be in columns");
+		return false;
+	}
+	if(typeof options.ORDER === "string" && columns.includes(options.ORDER)){
 		return false;
 	}
 	if(typeof options.ORDER === "string" && !validateInputString(options.ORDER,errors)){
@@ -85,16 +89,16 @@ function validateORDER(options: OPTIONS,columns: string[],errors: string[]){
 		error = `ORDER value ${options.ORDER} must be in OPTIONS.COLUMNS`;
 		errors.push(error);
 		return false;
-	}else if(!hasOnlyDirAndKeys(options.ORDER)){
+	}else if(typeof options.ORDER !== "string" && !hasOnlyDirAndKeys(options.ORDER)){
 		errors.push(`Invalid order object given : ${JSON.stringify(options.ORDER)}`);
 		return false;
-	}else if(options.ORDER.dir !== "UP" && options.ORDER.dir !== "DOWN"){
+	}else if(typeof options.ORDER !== "string" && options.ORDER.dir !== "UP" && options.ORDER.dir !== "DOWN"){
 		errors.push(`ORDER.dir must be one of UP and DOWN, found ${options.ORDER.dir} instead`);
 		return false;
-	}else if(!Array.isArray(options.ORDER.keys)){
+	}else if(typeof options.ORDER !== "string" && !Array.isArray(options.ORDER.keys)){
 		errors.push("Order keys must be an array");
 		return false;
-	}else{
+	}else if(typeof options.ORDER !== "string"){
 		for(const key of options.ORDER.keys){
 			if(!options.COLUMNS.includes(key)){
 				errors.push("Keys in ORDER must be in COLUMNS");
