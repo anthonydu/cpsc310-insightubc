@@ -12,7 +12,7 @@ export type IDSTRING = string;
 export type SKEY = `"${IDSTRING}_${SFIELD}"`;
 export type MKEY = `"${IDSTRING}_${MFIELD}"`;
 export type KEY = MKEY | SKEY;
-export type KEYLIST = KEY [];
+
 export type DIRECTION = "UP" | "DOWN";
 
 export interface SCOMPARISON {
@@ -124,7 +124,7 @@ export interface ORDER {
 	dir: DIRECTION,
 	keys: ANYKEY[]
 }
-export type ORDER2 = ANYKEY;
+
 /**
  * "TRANSFORMATIONS": {
  * "GROUP": ["sections_title"],
