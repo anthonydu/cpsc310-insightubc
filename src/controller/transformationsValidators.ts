@@ -30,7 +30,7 @@ export function validateTransformations(tf: TRANSFORMATIONS,columns: ANYKEY[], e
 	}
 
 
-	return false;
+	return true;
 }
 
 
