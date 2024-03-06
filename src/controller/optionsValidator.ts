@@ -1,32 +1,48 @@
-import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY,ORDER,skeys, mkeys} from "./queryTypes";
+import {IDSTRING, MFIELD, MKEY, OPTIONS, SFIELD, SKEY,ORDER,skeys, mkeys, QUERY, KEY} from "./queryTypes";
 import {validateIDString, validateInputString} from "./queryValidator";
+import {getApplyKeys} from "./transformationsValidators";
 
-export function validateOPTIONS(options: OPTIONS, errors: string[], ids: string[]): options is OPTIONS {
+export function validateOPTIONS(query: QUERY, errors: string[], ids: string[]): boolean {
+	const options: OPTIONS = query.OPTIONS;
+	const transformations = query.TRANSFORMATIONS;
 	let error: string;
 	if (!options) {
 		error = "Invalid type for OPTIONS, expected an object";
 		errors.push(error);
 		return false;
 	}
-	if (!options.COLUMNS || !Array.isArray(options.COLUMNS)) {
-		error = "OPTIONS missing COLUMNS";
-		errors.push(error);
+	const columnsValid = validateCOLUMNS(query,errors,ids);
+	if(!columnsValid){
 		return false;
 	}
+	return validateORDER(options, options.COLUMNS, errors);
+}
+function validateCOLUMNS(query: QUERY,errors: string[],ids: string[]){
+	const options: OPTIONS = query.OPTIONS;
+	const tf = query.TRANSFORMATIONS;
 	const columns: string[] = options.COLUMNS;
-	if (columns.length < 1) {
-		error = "COLUMNS must not be empty";
-		errors.push(error);
+	if (!columns || !Array.isArray(columns) || columns.length < 1) {
+		errors.push("COLUMNS must be an non empty array");
 		return false;
 	}
 	for (const column of columns) {
 		const delimiter = "_";
 		const parts = column.split(delimiter);
 		const requiredLength: number = 2;
+		let applyKeys: string[] = [] as string[];
 
-		if (parts.length < requiredLength) {
-			error = `${column} is not a valid column option`;
-			errors.push(error);
+		// Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present
+		if(tf?.APPLY !== undefined && tf.APPLY !== null){
+			applyKeys = getApplyKeys(tf?.APPLY);
+			if(!tf.GROUP.includes(column as KEY) && !applyKeys.includes(column)){
+				errors.push("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present.");
+				return false;
+			}
+		}
+
+		// a column name that is cannot be split on _ must be in applykeys to be valid
+		if (parts.length < requiredLength && !applyKeys.includes(column)) {
+			errors.push(`${column} is not a valid column option`);
 			return false;
 		}
 		ids.push(parts[0]);
@@ -47,9 +63,9 @@ export function validateOPTIONS(options: OPTIONS, errors: string[], ids: string[
 			}
 		}
 	}
-	return validateORDER(options, columns, errors);
-}
+	return true;
 
+}
 function hasOnlyDirAndKeys(obj: any): obj is ORDER {
 	return typeof obj === "object" &&
            obj !== null &&
