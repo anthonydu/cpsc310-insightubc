@@ -43,7 +43,7 @@ export function validateQuery(query: QUERY, errors: string[], ids: string[]): bo
 	if (!response) {
 		return response;
 	}
-	response = validateOPTIONS(parsedQuery.OPTIONS, errors, ids);
+	response = validateOPTIONS(parsedQuery, errors, ids);
 	if (!response) {
 		return response;
 	}
