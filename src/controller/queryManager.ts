@@ -89,6 +89,9 @@ export class QueryManager {
 		let res: InsightResult = {};
 		for (const col of columns) {
 			const parts = col.split("_");
+			if(parts.length < 2){
+				res[col] = section[col] as number; // handling column names that are apply keys
+			}
 			if (mkeys.includes(parts[1])) {
 				res[col] = section[parts[1]] as number;
 			} else {
