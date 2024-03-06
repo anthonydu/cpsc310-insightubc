@@ -47,13 +47,13 @@ function validateGroup(transformations: TRANSFORMATIONS,columns: ANYKEY[], error
 	}
 // If GROUP is present, all COLUMNS keys must correspond to one of the GROUP keys or to applykeys defined in the APPLY block.
 // Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present
-	const applyKeys = getApplyKeys(apply);
-	for(const col of columns){
-		if(!group.includes(col as KEY) && !applyKeys.includes(col)){
-			errors.push("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present.");
-			return false;
-		}
-	}
+	// const applyKeys = getApplyKeys(apply);
+	// for(const col of columns){
+	// 	if(!group.includes(col as KEY) && !applyKeys.includes(col)){
+	// 		errors.push("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present.");
+	// 		return false;
+	// 	}
+	// }
 
 	return true;
 }
@@ -141,7 +141,7 @@ function validateApplyRuleValue(value: Record<APPLYTOKEN,KEY>,errors: string[],i
 	return validateSkey(key as SKEY,errors,ids);
 }
 
-function getApplyKeys(apply: APPLY): string[]{
+export function getApplyKeys(apply: APPLY): string[]{
 	const applyKeys: string[] = [];
 	for(const rule of apply){
 		applyKeys.push(Object.keys(rule)[0]);
