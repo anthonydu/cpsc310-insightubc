@@ -150,7 +150,6 @@ export function FILTER_DATA(filter: any, section: Section| Room): boolean {
 }
 
 function mcomparison(mcomp: MCOMPARISON, section: Item): boolean {
-	// console.log("M COMP",JSON.stringify(mcomp));
 	const eq: unknown = mcomp.EQ;
 	if (eq) {
 		return EQ(mcomp, section);
