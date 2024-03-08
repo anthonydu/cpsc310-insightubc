@@ -44,23 +44,29 @@ function validateCOLUMNS(query: QUERY,errors: string[],ids: string[]){
 			errors.push(`${column} is not a valid column option`);
 			return false;
 		}
-		ids.push(parts[0]);
-		if (!mkeys.includes(parts[1]) && !skeys.includes(parts[1])) {
-			errors.push(`invalid skey or mkey found- ${parts[1]}`);
-			return false;
-		}
-		if (mkeys.includes(parts[1])) {
-			const mkeyvalid = validateMkey(column as MKEY, errors, ids);
-			if (!mkeyvalid) {
+		// apply keys are not associated with dataset ids
+		// therefore, we only want to keep track of keys that can be split on '_'
+		if(!applyKeys.includes(column)){
+			ids.push(parts[0]);
+			if (!mkeys.includes(parts[1]) && !skeys.includes(parts[1])) {
+				errors.push(`invalid skey or mkey found- ${parts[1]}`);
 				return false;
 			}
-		}
-		if (skeys.includes(parts[1])) {
-			const skeyvalid = validateSkey(column as SKEY, errors, ids);
-			if (!skeyvalid) {
-				return false;
+
+			if (mkeys.includes(parts[1])) {
+				const mkeyvalid = validateMkey(column as MKEY, errors, ids);
+				if (!mkeyvalid) {
+					return false;
+				}
+			}
+			if (skeys.includes(parts[1])) {
+				const skeyvalid = validateSkey(column as SKEY, errors, ids);
+				if (!skeyvalid) {
+					return false;
+				}
 			}
 		}
+
 	}
 	return true;
 

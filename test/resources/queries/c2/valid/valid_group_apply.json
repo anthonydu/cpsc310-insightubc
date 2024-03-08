@@ -1,0 +1,238 @@
+{
+	"title": "valid_group_apply",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"IS": {
+						"rooms_furniture": "*es*"
+					}
+				},
+				{
+					"LT": {
+						"rooms_seats": 300
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_shortname",
+				"rooms_lon",
+				"maxis"
+			],
+			"ORDER": {
+				"dir": "DOWN",
+				"keys": [
+					"rooms_lon"
+				]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_shortname",
+				"rooms_lon"
+			],
+			"APPLY": [
+				{
+					"maxis": {
+						"SUM": "rooms_seats"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"rooms_shortname": "PHRM",
+			"rooms_lon": -123.24342,
+			"maxis": 538
+		},
+		{
+			"rooms_shortname": "OSBO",
+			"rooms_lon": -123.24467,
+			"maxis": 40
+		},
+		{
+			"rooms_shortname": "LSC",
+			"rooms_lon": -123.24494,
+			"maxis": 125
+		},
+		{
+			"rooms_shortname": "FRDM",
+			"rooms_lon": -123.24608,
+			"maxis": 160
+		},
+		{
+			"rooms_shortname": "WOOD",
+			"rooms_lon": -123.24673,
+			"maxis": 592
+		},
+		{
+			"rooms_shortname": "CHBE",
+			"rooms_lon": -123.24718,
+			"maxis": 354
+		},
+		{
+			"rooms_shortname": "DMP",
+			"rooms_lon": -123.24807,
+			"maxis": 440
+		},
+		{
+			"rooms_shortname": "SPPH",
+			"rooms_lon": -123.24842,
+			"maxis": 166
+		},
+		{
+			"rooms_shortname": "FSC",
+			"rooms_lon": -123.24886,
+			"maxis": 272
+		},
+		{
+			"rooms_shortname": "CEME",
+			"rooms_lon": -123.24894,
+			"maxis": 289
+		},
+		{
+			"rooms_shortname": "SRC",
+			"rooms_lon": -123.24894,
+			"maxis": 897
+		},
+		{
+			"rooms_shortname": "MCLD",
+			"rooms_lon": -123.24935,
+			"maxis": 503
+		},
+		{
+			"rooms_shortname": "ORCH",
+			"rooms_lon": -123.24944,
+			"maxis": 263
+		},
+		{
+			"rooms_shortname": "FNH",
+			"rooms_lon": -123.24959,
+			"maxis": 28
+		},
+		{
+			"rooms_shortname": "MCML",
+			"rooms_lon": -123.25027,
+			"maxis": 299
+		},
+		{
+			"rooms_shortname": "IONA",
+			"rooms_lon": -123.25042,
+			"maxis": 150
+		},
+		{
+			"rooms_shortname": "HEBB",
+			"rooms_lon": -123.25165,
+			"maxis": 162
+		},
+		{
+			"rooms_shortname": "FORW",
+			"rooms_lon": -123.25179,
+			"maxis": 142
+		},
+		{
+			"rooms_shortname": "EOSM",
+			"rooms_lon": -123.25198,
+			"maxis": 50
+		},
+		{
+			"rooms_shortname": "IBLC",
+			"rooms_lon": -123.2521,
+			"maxis": 538
+		},
+		{
+			"rooms_shortname": "ESB",
+			"rooms_lon": -123.25224,
+			"maxis": 80
+		},
+		{
+			"rooms_shortname": "BRKX",
+			"rooms_lon": -123.25237,
+			"maxis": 94
+		},
+		{
+			"rooms_shortname": "BIOL",
+			"rooms_lon": -123.25249,
+			"maxis": 108
+		},
+		{
+			"rooms_shortname": "SCRF",
+			"rooms_lon": -123.2531,
+			"maxis": 724
+		},
+		{
+			"rooms_shortname": "ALRD",
+			"rooms_lon": -123.25318,
+			"maxis": 228
+		},
+		{
+			"rooms_shortname": "ANGU",
+			"rooms_lon": -123.25364,
+			"maxis": 1546
+		},
+		{
+			"rooms_shortname": "HENN",
+			"rooms_lon": -123.25374,
+			"maxis": 96
+		},
+		{
+			"rooms_shortname": "SWNG",
+			"rooms_lon": -123.25431,
+			"maxis": 1421
+		},
+		{
+			"rooms_shortname": "BUCH",
+			"rooms_lon": -123.25468,
+			"maxis": 1473
+		},
+		{
+			"rooms_shortname": "SOWK",
+			"rooms_lon": -123.25505,
+			"maxis": 44
+		},
+		{
+			"rooms_shortname": "LSK",
+			"rooms_lon": -123.25533,
+			"maxis": 505
+		},
+		{
+			"rooms_shortname": "MATH",
+			"rooms_lon": -123.255534,
+			"maxis": 156
+		},
+		{
+			"rooms_shortname": "LASR",
+			"rooms_lon": -123.25583,
+			"maxis": 120
+		},
+		{
+			"rooms_shortname": "PCOH",
+			"rooms_lon": -123.2559,
+			"maxis": 216
+		},
+		{
+			"rooms_shortname": "GEOG",
+			"rooms_lon": -123.25623,
+			"maxis": 394
+		},
+		{
+			"rooms_shortname": "AUDX",
+			"rooms_lon": -123.25655,
+			"maxis": 41
+		},
+		{
+			"rooms_shortname": "UCLL",
+			"rooms_lon": -123.25692,
+			"maxis": 133
+		},
+		{
+			"rooms_shortname": "ANSO",
+			"rooms_lon": -123.25741,
+			"maxis": 96
+		}
+	]
+}

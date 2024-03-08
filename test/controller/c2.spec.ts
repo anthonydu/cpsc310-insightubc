@@ -11,15 +11,14 @@ import {expect, use} from "chai";
 
 import chaiAsPromised from "chai-as-promised";
 
-import {clearDisk, getContentFromArchives, readFileQueries} from "../TestUtil";
+import {ITestQuery, clearDisk, getContentFromArchives, readFileQueries} from "../TestUtil";
 
 import fs from "fs-extra";
 
-const validQueries = readFileQueries("c2/valid");
-const invalidQueries = readFileQueries("c2/invalid");
 
 let facade: IInsightFacade;
 let campus: string;
+let sections: string;
 
 export default function testInsightFacade() {
 	use(chaiAsPromised);
@@ -28,6 +27,7 @@ export default function testInsightFacade() {
 		before(async () => {
 			facade = new InsightFacade();
 			campus = await getContentFromArchives("campus.zip");
+			sections =  await getContentFromArchives("pair.zip");
 		});
 
 		beforeEach(async () => {
@@ -91,5 +91,62 @@ function testRemoveDataset() {
 }
 
 function testPerformQuery() {
-	return;
+	describe("C2 PerformQuery", () => {
+
+		beforeEach(async () => {
+			await facade.addDataset("rooms", campus, InsightDatasetKind.Rooms);
+			// await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
+
+		});
+
+		describe("C2 PerformQuery-Invalid queries", () => {
+			let invalidQueries: ITestQuery[];
+			try {
+				invalidQueries = readFileQueries("c2/invalid");
+			} catch (e: unknown) {
+				expect.fail(`Failed to read one or more test queries. ${e}`);
+			}
+
+			invalidQueries.forEach((test: ITestQuery) => {
+				it(`${test.title}`, async () => {
+					const RESULT_TOO_LARGE_ERROR: string = "ResultTooLargeError";
+					try {
+						const res = await facade.performQuery(test.input);
+						expect.fail("performQuery should have thrown an error because query is invalid}");
+					} catch (error: any) {
+						if (test.errorExpected && test.expected === RESULT_TOO_LARGE_ERROR) {
+							expect(error).to.be.instanceOf(ResultTooLargeError);
+						} else if (test.errorExpected) {
+							expect(error).to.be.instanceOf(InsightError);
+						}
+					}
+				});
+			});
+		});
+
+		describe("PerformQuery-Valid queries", () => {
+			let validQueries: ITestQuery[];
+			try {
+				validQueries = readFileQueries("c2/valid");
+			} catch (e: unknown) {
+				expect.fail(`Failed to read one or more test queries. ${e}`);
+			}
+			validQueries.forEach((test: ITestQuery) => {
+
+				it(test.title, async () => {
+					try {
+						const queryResult = await facade.performQuery(test.input);
+
+						expect(queryResult).to.deep.members(test.expected);
+						expect(test.expected).to.deep.members(queryResult);
+						expect(queryResult.length).to.deep.equal(test.expected.length);
+					} catch (error: any) {
+						console.log("ERROR",error);
+						expect.fail("performQuery threw unexpected error");
+					}
+				});
+
+			});
+		});
+	});
 }
