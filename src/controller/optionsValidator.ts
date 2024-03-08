@@ -33,7 +33,7 @@ function validateCOLUMNS(query: QUERY,errors: string[],ids: string[]){
 		// Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present
 		if(tf?.APPLY !== undefined && tf.APPLY !== null){
 			applyKeys = getApplyKeys(tf?.APPLY);
-			if(!tf.GROUP.includes(column as KEY) && !applyKeys.includes(column)){
+			if(tf.GROUP && !tf.GROUP.includes(column as KEY) && !applyKeys.includes(column)){
 				errors.push("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present.");
 				return false;
 			}

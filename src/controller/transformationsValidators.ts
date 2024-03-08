@@ -23,9 +23,9 @@ import {ANYKEY, APPLY, APPLYRULE, APPLYTOKEN, IDSTRING, KEY,
  */
 export function validateTransformations(tf: TRANSFORMATIONS,columns: ANYKEY[], errors: string[],ids: string[]): boolean{
 	const apply = tf.APPLY;
-	if(!validateApply(apply,errors,ids)){
+	if(!validateGroup(tf,errors,ids)){
 		return false;
-	}else if(!validateGroup(tf,errors,ids)){
+	}else if(!validateApply(apply,errors,ids)){
 		return false;
 	}
 
@@ -36,7 +36,6 @@ export function validateTransformations(tf: TRANSFORMATIONS,columns: ANYKEY[], e
 
 function validateGroup(transformations: TRANSFORMATIONS, errors: string[],ids: string[]): boolean{
 	const group = transformations.GROUP;
-	console.log(group);
 	if(group === undefined || group === null){
 		errors.push("Invalid value for GROUP");
 		return false;
