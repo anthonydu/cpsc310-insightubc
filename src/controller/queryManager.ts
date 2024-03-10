@@ -61,7 +61,7 @@ export class QueryManager {
 		const filter = this.query.WHERE;
 		// empty WHERE, get everything
 		if (Object.keys(filter).length === 0) {
-			this.result = dataset.map((section) => this.getColumns(section));
+			this.result = dataset;
 		} else {
 			for (const item of dataset as unknown as InsightResult[]) {
 				if (FILTER_DATA(filter as FILTER, item as unknown as Item)) {
@@ -69,9 +69,7 @@ export class QueryManager {
 				}
 			}
 		}
-		if (this.result.length > this.QUERY_MAX) {
-			return Promise.reject(new ResultTooLargeError("Result too large"));
-		}
+
 		if(this.query.TRANSFORMATIONS !== undefined){
 			this.result = executeTransformations(this.query.TRANSFORMATIONS,this.result,this.query.OPTIONS.COLUMNS);
 		}
@@ -88,6 +86,9 @@ export class QueryManager {
 			tempResults.push(res);
 		}
 		this.result = tempResults;
+		if (this.result.length > this.QUERY_MAX) {
+			return Promise.reject(new ResultTooLargeError("Result too large"));
+		}
 		return Promise.resolve(this.result);
 	}
 
