@@ -11,9 +11,9 @@ function MIN(group: InsightResult[],applyRule: APPLYRULE): number{
 	const firstItem = group[0];
 
 
-	let minimum: number = Number.parseInt(firstItem[fieldName] as string, 10);
+	let minimum: number = Number.parseFloat(firstItem[fieldName] as string);
 	for(const item of group){
-		const value: number = Number.parseInt(item[fieldName] as string, 10);
+		const value: number = Number.parseFloat(item[fieldName] as string);
 		minimum = Math.min(minimum,value);
 	}
 
@@ -27,9 +27,9 @@ function MAX(group: InsightResult[],applyRule: APPLYRULE): number{
 	const fieldParts = field.split("_");
 	const fieldName = fieldParts[1];
 	const firstItem = group[0];
-	let maximum: number = Number.parseInt(firstItem[fieldName] as string, 10);
+	let maximum: number = Number.parseFloat(firstItem[fieldName] as string);
 	for(const item of group){
-		const value: number = Number.parseInt(item[fieldName] as string, 10);
+		const value: number = Number.parseFloat(item[fieldName] as string);
 		maximum = Math.max(maximum,value);
 	}
 
@@ -47,7 +47,7 @@ function AVG(group: InsightResult[],applyRule: APPLYRULE): number{
 
 	for(const item of group){
 		const value = new Decimal(item[fieldName] );
-		total.add(value);
+		total = total.add(value);
 	}
 
 	const avg =  total.toNumber() / count;
@@ -64,7 +64,7 @@ function SUM(group: InsightResult[],applyRule: APPLYRULE): number{
 
 	let sum: number = 0;
 	for(const item of group){
-		const value: number = Number.parseInt(item[fieldName] as string, 10);
+		const value: number = Number.parseFloat(item[fieldName] as string);
 		sum += value;
 	}
 
