@@ -1,4 +1,4 @@
-import {APPLYRULE,APPLY, GROUP, TRANSFORMATIONS, KEY, ANYKEY, APPLYKEY} from "./queryTypes";
+import {APPLYRULE,APPLY, GROUP, TRANSFORMATIONS, KEY, ANYKEY, APPLYKEY, mkeys} from "./queryTypes";
 import {InsightResult} from "./IInsightFacade";
 import Decimal from "decimal.js";
 
@@ -6,12 +6,14 @@ import Decimal from "decimal.js";
 function MIN(group: InsightResult[],applyRule: APPLYRULE): number{
 	const minObj =  Object.values(applyRule)[0];
 	const field = minObj?.MIN.toString();
+	const fieldParts = field.split("_");
+	const fieldName = fieldParts[1];
 	const firstItem = group[0];
 
 
-	let minimum: number = Number.parseInt(firstItem[field] as string, 10);
+	let minimum: number = Number.parseInt(firstItem[fieldName] as string, 10);
 	for(const item of group){
-		const value: number = Number.parseInt(item[field] as string, 10);
+		const value: number = Number.parseInt(item[fieldName] as string, 10);
 		minimum = Math.min(minimum,value);
 	}
 
@@ -22,10 +24,12 @@ function MAX(group: InsightResult[],applyRule: APPLYRULE): number{
 	const maxObj =  Object.values(applyRule)[0];
 
 	const field = maxObj?.MAX.toString();
+	const fieldParts = field.split("_");
+	const fieldName = fieldParts[1];
 	const firstItem = group[0];
-	let maximum: number = Number.parseInt(firstItem[field] as string, 10);
+	let maximum: number = Number.parseInt(firstItem[fieldName] as string, 10);
 	for(const item of group){
-		const value: number = Number.parseInt(item[field] as string, 10);
+		const value: number = Number.parseInt(item[fieldName] as string, 10);
 		maximum = Math.max(maximum,value);
 	}
 
@@ -36,11 +40,13 @@ function AVG(group: InsightResult[],applyRule: APPLYRULE): number{
 	const avgObj =  Object.values(applyRule)[0];
 
 	const field = avgObj?.AVG.toString();
+	const fieldParts = field.split("_");
+	const fieldName = fieldParts[1];
 	let total: Decimal = new Decimal(0);
 	let count = group.length;
 
 	for(const item of group){
-		const value = new Decimal(item[field] );
+		const value = new Decimal(item[fieldName] );
 		total.add(value);
 	}
 
@@ -52,11 +58,13 @@ function AVG(group: InsightResult[],applyRule: APPLYRULE): number{
 function SUM(group: InsightResult[],applyRule: APPLYRULE): number{
 	const sumObj =  Object.values(applyRule)[0];
 
-	const field = sumObj?.SUM.toString();
+	const field = sumObj?.SUM;
+	const fieldParts = field.split("_");
+	const fieldName = fieldParts[1];
 
 	let sum: number = 0;
 	for(const item of group){
-		const value: number = Number.parseInt(item[field] as string, 10);
+		const value: number = Number.parseInt(item[fieldName] as string, 10);
 		sum += value;
 	}
 
@@ -68,28 +76,39 @@ function COUNT(group: InsightResult[],applyRule: APPLYRULE): number{
 	const countObj =  Object.values(applyRule)[0];
 
 	const field = countObj?.COUNT.toString();
+	const fieldParts = field.split("_");
+	const fieldName = fieldParts[1];
 	const set = new Set();
 	for(const item of group){
-		const value = item[field];
+		const value = item[fieldName];
 		set.add(value);
 	}
 
 	return set.size;
 }
+function getGroupName(item: InsightResult,groupers: GROUP): string{
 
-export function EXECUTE_GROUP(items: InsightResult[],groupers: GROUP): InsightResult[][]{
+	const keyParts: string[] = groupers.map((field) => {
+		const itemField = field.split("_")[1];
+		return String(item[itemField]);
+	});
+	const key =  keyParts.join("|");
+	return key;
+
+}
+export function EXECUTE_GROUP(items: InsightResult[],groupers: GROUP): Record<string,InsightResult[]>{
 	const initial = {} as Record<string,InsightResult[]>;
 	const groups = items.reduce((map, item) => {
-        // Generate a key based on the values of the specified fields
-		const key = groupers.map((field) => String(item[field])).join("-");
-		let group = map[key] || [];
-		group.push(item);
 
-		map[key] = group;
+		const key = getGroupName(item,groupers);
+		if(!map[key]){
+			map[key] = [];
+		}
+		map[key].push(item);
 		return map;
 	}, initial);
 
-	return Object.values(groups);
+	return groups;
 }
 
 
@@ -101,16 +120,21 @@ export function EXECUTE_GROUP(items: InsightResult[],groupers: GROUP): InsightRe
 function EXUCUTE_APPLY(groups: InsightResult[][],apply: APPLY,
 	groupers: GROUP, columns: ANYKEY[]): InsightResult[]{
 
-	let item;
+	let item: Record<string, string | number> = {};
 	const results: InsightResult[] = [];
 
 	for(const group of groups){
 		// In each group, the values of each keys in GROUP are the same for all elements
 		// We want to pass those values to the final returned object
 		const firstItem = group[0];
-		item = executeGroupApply(group,apply,groupers,columns) ;
+		if(apply.length > 0){
+			item = executeGroupApply(group,apply,columns) ;
+		}
+
 		for(const grouper of groupers){
-			item[grouper] = firstItem[grouper];
+			const grouperParts = grouper.split("_");
+			const grouperField = grouperParts[1];
+			item[grouperField] = firstItem[grouperField];
 		}
 		results.push(item);
 	}
@@ -118,28 +142,27 @@ function EXUCUTE_APPLY(groups: InsightResult[][],apply: APPLY,
 	return  results;
 
 }
-function executeGroupApply(group: InsightResult[],apply: APPLY,
-	groupers: GROUP,columns: ANYKEY[]): Record<string, string|number>{
+function executeGroupApply(group: InsightResult[],apply: APPLY,columns: ANYKEY[]): Record<string, string|number>{
 	type ApplyFunction = (result: InsightResult[], applyRule: APPLYRULE) => number;
 	const applyMap: {[key: string]: ApplyFunction} = {
-		MIN,
-		MAX,
-		AVG,
-		SUM,
-		COUNT
+		MIN:MIN,
+		MAX:MAX,
+		AVG:AVG,
+		SUM:SUM,
+		COUNT:COUNT
 	};
-	let returnItem = {} as Record<string, string|number> ;
+	const returnItem = {} as Record<string, string|number> ;
 	for(const applyRule of apply){
 
 		const applykey = Object.keys(applyRule)[0];
 		const applyObj = Object.values(applyRule)[0];
 		const applyToken = Object.keys(applyObj)[0];
+
 		// We only care when the apply key is in the columns, if not we do not need to compute its value
 		if(columns.includes(applykey)){
 			returnItem[applykey] = applyMap[applyToken](group,applyRule);
 		}
 	}
-
 
 	return returnItem;
 }
@@ -149,14 +172,34 @@ function executeGroupApply(group: InsightResult[],apply: APPLY,
  * @returns : results after applying  the relevant transformations
  */
 export function executeTransformations(transformations: TRANSFORMATIONS, results: InsightResult[],columns: ANYKEY[]){
+	let finalResults = [];
 	const groups = EXECUTE_GROUP(results,transformations.GROUP );
+	const groupers = transformations.GROUP;
 	if(transformations.APPLY.length <= 0){
+		const groupsKeys = Object.keys(groups);
 
-		return groups.flat();
+		for(const key of groupsKeys){
+			const newObj: InsightResult = {};
+			const  values = key.split("|");
+			for(let i = 0;i < values.length; i++){
+				const grouper = groupers[i];
+				const grouperParts = grouper.split("_");
 
+				if(mkeys.includes(grouperParts[1])){
+					newObj[groupers[i]] = Number.parseFloat(values[i]);
+				}else{
+					newObj[groupers[i]] = values[i];
+				}
+
+
+			}
+			finalResults.push(newObj);
+		}
+		return finalResults;
 	}
+	const groupsArray = Object.values(groups);
 
-	const finalResults = EXUCUTE_APPLY(groups,transformations.APPLY,transformations.GROUP,columns);
+	finalResults = EXUCUTE_APPLY(groupsArray,transformations.APPLY,transformations.GROUP,columns);
 
 	return finalResults;
 }

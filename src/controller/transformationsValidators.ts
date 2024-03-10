@@ -1,6 +1,6 @@
 import {validateMkey, validateSkey} from "./optionsValidator";
-import {ANYKEY, APPLY, APPLYRULE, APPLYTOKEN, KEY, MKEY, SKEY, TRANSFORMATIONS, applyTokens} from "./queryTypes";
-import {validateIDString} from "./queryValidator";
+import {ANYKEY, APPLY, APPLYRULE, APPLYTOKEN, IDSTRING, KEY,
+	MKEY, SKEY, TRANSFORMATIONS, applyTokens} from "./queryTypes";
 
 
 /**
@@ -23,9 +23,9 @@ import {validateIDString} from "./queryValidator";
  */
 export function validateTransformations(tf: TRANSFORMATIONS,columns: ANYKEY[], errors: string[],ids: string[]): boolean{
 	const apply = tf.APPLY;
-	if(!validateApply(apply,errors,ids)){
+	if(!validateGroup(tf,errors,ids)){
 		return false;
-	}else if(!validateGroup(tf,columns,errors,ids)){
+	}else if(!validateApply(apply,errors,ids)){
 		return false;
 	}
 
@@ -34,10 +34,9 @@ export function validateTransformations(tf: TRANSFORMATIONS,columns: ANYKEY[], e
 }
 
 
-function validateGroup(transformations: TRANSFORMATIONS,columns: ANYKEY[], errors: string[],ids: string[]): boolean{
+function validateGroup(transformations: TRANSFORMATIONS, errors: string[],ids: string[]): boolean{
 	const group = transformations.GROUP;
-	const apply = transformations.APPLY;
-	if(!group){
+	if(group === undefined || group === null){
 		errors.push("Invalid value for GROUP");
 		return false;
 	}
@@ -45,21 +44,12 @@ function validateGroup(transformations: TRANSFORMATIONS,columns: ANYKEY[], error
 		errors.push("GROUP must be a non empty array");
 		return false;
 	}
-// If GROUP is present, all COLUMNS keys must correspond to one of the GROUP keys or to applykeys defined in the APPLY block.
-// Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present
-	// const applyKeys = getApplyKeys(apply);
-	// for(const col of columns){
-	// 	if(!group.includes(col as KEY) && !applyKeys.includes(col)){
-	// 		errors.push("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present.");
-	// 		return false;
-	// 	}
-	// }
+
 
 	return true;
 }
 
 
-// TODO: APPLY can be an empty array
 function validateApply(apply: APPLYRULE[],errors: string[],ids: string[]): boolean{
 	if(!Array.isArray(apply)){
 		errors.push("APPLY must be a list of Apply Rules");
@@ -102,7 +92,7 @@ function validateApplyRule(applyRule: APPLYRULE,errors: string[],ids: string[]){
 	if(applyKeys.length > 1 || applyKeys.length <= 0){
 		errors.push("Apply rule must be an object with only one key");
 		return false;
-	}else if(!validateIDString(applyKeys[0],errors,ids)){
+	}else if(!validateApplyKey(applyKeys[0],errors,ids)){
 		errors.push(`Invalid apply key ${applyKeys[0]}`);
 		return false;
 	}
@@ -147,4 +137,14 @@ export function getApplyKeys(apply: APPLY): string[]{
 		applyKeys.push(Object.keys(rule)[0]);
 	}
 	return applyKeys;
+}
+export function validateApplyKey(str: IDSTRING, errors: string[], ids: string[]): boolean {
+	let error: string;
+	const pattern = new RegExp("[^_]+");
+	if (!pattern.test(str)) {
+		error = `invalid applyKey ${str}`;
+		errors.push(error);
+		return false;
+	}
+	return true;
 }

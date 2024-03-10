@@ -1,9 +1,10 @@
 import * as fs from "fs-extra";
 import {InsightError, InsightResult, ResultTooLargeError} from "./IInsightFacade";
 import {FILTER_DATA, orderResults} from "./queryExecutor";
-import {FILTER, QUERY, Section,mkeys} from "./queryTypes";
+import {APPLY, FILTER, Item, QUERY, Section,mkeys} from "./queryTypes";
 import {validateQuery} from "./queryValidator";
 import {executeTransformations} from "./aggregations";
+import {getApplyKeys} from "./transformationsValidators";
 
 
 export class QueryManager {
@@ -48,6 +49,7 @@ export class QueryManager {
 			return Promise.reject(new InsightError("Multiple data sets referenced"));
 		}
 		if (!valid) {
+
 			const firstError: string = this.errors[0];
 			return Promise.reject(new InsightError(firstError));
 		}
@@ -61,17 +63,16 @@ export class QueryManager {
 		if (Object.keys(filter).length === 0) {
 			this.result = dataset.map((section) => this.getColumns(section));
 		} else {
-			for (const section of dataset as unknown as InsightResult[]) {
-				if (FILTER_DATA(filter as FILTER, section as unknown as Section)) {
-					const res: InsightResult = this.getColumns(section);
-					this.result.push(res);
+			for (const item of dataset as unknown as InsightResult[]) {
+				if (FILTER_DATA(filter as FILTER, item as unknown as Item)) {
+					this.result.push(item);
 				}
 			}
 		}
 		if (this.result.length > this.QUERY_MAX) {
 			return Promise.reject(new ResultTooLargeError("Result too large"));
 		}
-		if(this.query.TRANSFORMATIONS){
+		if(this.query.TRANSFORMATIONS !== undefined){
 			this.result = executeTransformations(this.query.TRANSFORMATIONS,this.result,this.query.OPTIONS.COLUMNS);
 		}
 		if (this.query.OPTIONS.ORDER) {
@@ -81,24 +82,36 @@ export class QueryManager {
 			}
 			orderResults(this.query.OPTIONS.ORDER,this.result);
 		}
-
+		const tempResults: InsightResult[] = [];
+		for(const item of this.result){
+			const res: InsightResult = this.getColumns(item);
+			tempResults.push(res);
+		}
+		this.result = tempResults;
 		return Promise.resolve(this.result);
 	}
 
 	public getColumns(section: InsightResult): InsightResult {
 		const columns: string[] = this.query.OPTIONS.COLUMNS;
 		let res: InsightResult = {};
+		const apply = this.query.TRANSFORMATIONS?.APPLY || [] as APPLY;
+		const applykeys = getApplyKeys(apply as APPLY);
+
 		for (const col of columns) {
 			const parts = col.split("_");
-			if(parts.length < 2){
+			const fieldName = parts[1];
+
+			if(applykeys?.includes(col)){
 				res[col] = section[col] as number; // handling column names that are apply keys
-			}
-			if (mkeys.includes(parts[1])) {
-				res[col] = section[parts[1]] as number;
+			}else if(col in section){
+				res[col] = section[col];
+			}else if (mkeys.includes(fieldName)) {
+				res[col] = section[fieldName] as number;
 			} else {
-				res[col] = section[parts[1]];
+				res[col] = section[fieldName];
 			}
 		}
+
 		return res;
 	}
 
@@ -127,12 +140,13 @@ export class QueryManager {
 			const datasets = await fs.readJson(this.dataFolder);
 			return datasets;
 		} catch (error: unknown) {
-			console.log("Error reading persisted data");
+			console.log(`Error reading persisted data: ${error}`);
 			throw new InsightError("Error reading data");
 		}
 	}
 
 	private async getDatasetById(id: string): Promise<InsightResult[]> {
+
 		try {
 			const datasets: InsightResult[] = await this.readPersistedData();
 
@@ -146,14 +160,6 @@ export class QueryManager {
 		} catch (error: unknown) {
 			throw new InsightError("Error reading data");
 		}
-	}
-
-	public groupBy(){
-		return null;
-	}
-
-	public apply(){
-		return null;
 	}
 
 }

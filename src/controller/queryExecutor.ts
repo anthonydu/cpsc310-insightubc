@@ -75,9 +75,9 @@ function sortCallBack(first: InsightResult, second: InsightResult,keys: string[]
 		const isDiff = first[key] !== second[key];
 		const isGreater = first[key] > second[key];
 		if( isDiff && dir === UP){
-			return isGreater ? 1 : -1;
-		}else if( isDiff && dir === DOWN){
 			return isGreater ? -1 : 1;
+		}else if( isDiff && dir === DOWN){
+			return isGreater ? 1 : -1;
 		}
 
 	}
