@@ -1,0 +1,31 @@
+{
+	"title": "valid_missing_apply",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"IS": {
+						"rooms_furniture": "*es*"
+					}
+				},
+				{
+					"LT": {
+						"rooms_seats": 300
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": ["rooms_shortname", "rooms_lon"],
+			"ORDER": {
+				"dir": "DOWN",
+				"keys": ["rooms_lon"]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": ["rooms_shortname", "rooms_lon"]
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}

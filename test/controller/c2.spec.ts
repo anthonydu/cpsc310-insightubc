@@ -148,5 +148,30 @@ function testPerformQuery() {
 
 			});
 		});
+
+		describe("PerformQuery-Valid queries with order", () => {
+			let validQueries: ITestQuery[];
+			try {
+				validQueries = readFileQueries("c2/valid_order");
+			} catch (e: unknown) {
+				expect.fail(`Failed to read one or more test queries. ${e}`);
+			}
+			validQueries.forEach((test: ITestQuery) => {
+
+				it(test.title, async () => {
+					try {
+						const queryResult = await facade.performQuery(test.input);
+
+						expect(queryResult).to.deep.equal(test.expected);
+						expect(test.expected).to.deep.equal(queryResult);
+						expect(queryResult.length).to.deep.equal(test.expected.length);
+					} catch (error: any) {
+						console.log("ERROR",error);
+						expect.fail("performQuery threw unexpected error");
+					}
+				});
+
+			});
+		});
 	});
 }

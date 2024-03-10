@@ -1,0 +1,23 @@
+{
+	"title": "invalid_missing_order_dir",
+	"input": {
+		"WHERE": {},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_shortname",
+				"rooms_number",
+				"rooms_address",
+				"rooms_lat",
+				"rooms_lon",
+				"rooms_seats",
+				"rooms_type",
+				"rooms_furniture",
+				"rooms_href"
+			],
+			"ORDER": {"keys": ["rooms_fullname"]}
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}
