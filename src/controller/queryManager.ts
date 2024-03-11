@@ -73,13 +73,7 @@ export class QueryManager {
 		if(this.query.TRANSFORMATIONS !== undefined){
 			this.result = executeTransformations(this.query.TRANSFORMATIONS,this.result,this.query.OPTIONS.COLUMNS);
 		}
-		if (this.query.OPTIONS.ORDER) {
-			if (typeof this.query.OPTIONS.ORDER === "string" &&
-			!this.query.OPTIONS.COLUMNS.includes(this.query.OPTIONS.ORDER)) {
-				return Promise.reject(new InsightError("Order key not in columns"));
-			}
-			orderResults(this.query.OPTIONS.ORDER,this.result);
-		}
+
 		const tempResults: InsightResult[] = [];
 		for(const item of this.result){
 			const res: InsightResult = this.getColumns(item);
@@ -88,6 +82,13 @@ export class QueryManager {
 		this.result = tempResults;
 		if (this.result.length > this.QUERY_MAX) {
 			return Promise.reject(new ResultTooLargeError("Result too large"));
+		}
+		if (this.query.OPTIONS.ORDER) {
+			if (typeof this.query.OPTIONS.ORDER === "string" &&
+			!this.query.OPTIONS.COLUMNS.includes(this.query.OPTIONS.ORDER)) {
+				return Promise.reject(new InsightError("Order key not in columns"));
+			}
+			orderResults(this.query.OPTIONS.ORDER,this.result);
 		}
 		return Promise.resolve(this.result);
 	}

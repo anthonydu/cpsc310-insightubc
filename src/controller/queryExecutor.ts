@@ -69,24 +69,47 @@ function NOT(negation: NEGATION, section: Item): boolean {
 	return !FILTER_DATA(filter, section);
 }
 function sortCallBack(first: InsightResult, second: InsightResult,keys: string[],dir: string){
+
 	const UP = "UP";
 	const DOWN = "DOWN";
+	if (keys.length === 1) {
+		const key = keys[0];
+
+		const isDiff = parseFloat(first[key] as string) !== parseFloat(second[key] as string);
+		if (isDiff && dir === UP && first[key]  > second[key] ) {
+
+			return  1;
+		} else if (isDiff && dir === UP && first[key]  < second[key]) {
+			return -1;
+		}else if (isDiff && dir === DOWN && first[key]  > second[key] ) {
+
+			return  -1;
+		}else if (isDiff && dir === DOWN && first[key]  < second[key] ) {
+
+			return  1;
+		}
+		return 0;
+
+	}
+
 	for(const key of keys){
 		const isDiff = first[key] !== second[key];
 		const isGreater = first[key] > second[key];
 		if( isDiff && dir === UP){
-			return isGreater ? -1 : 1;
-		}else if( isDiff && dir === DOWN){
+
 			return isGreater ? 1 : -1;
+		}else if( isDiff && dir === DOWN){
+
+			return isGreater ? -1 : 1;
 		}
 
 	}
 	return 0;
 }
 function simpleSortCallBack(first: InsightResult, second: InsightResult,key: string){
-	if ((first[key] ) < (second[key])) {
+	if (first[key] < second[key]) {
 		return -1;
-	}else if((first[key] ) > (second[key])){
+	}else if(first[key] > second[key]){
 		return 1;
 	}else{
 		return 0;
@@ -97,6 +120,7 @@ function sortByKeys(order: any, result: InsightResult[]){
 		return;
 	}
 	if(typeof order === "string"){
+
 		result.sort((first: InsightResult, second: InsightResult) => simpleSortCallBack(first,second,order));
 	}else{
 		const keys = order.keys;

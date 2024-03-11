@@ -80,8 +80,8 @@ export default class InsightFacade implements IInsightFacade {
 						fullname: titleNode.getElementsBy("tagName", "a")[0].getText(),
 						shortname: row.getElementsBy("className", "views-field-field-building-code")[0].getText(),
 						address,
-						lat: geoResponse.lat as number,
-						lon: geoResponse.lon as number,
+						lat: parseFloat(geoResponse.lat as unknown as string),
+						lon: parseFloat(geoResponse.lon as unknown as string) ,
 						href: titleNode.getElementsBy("tagName", "a")[0].getAttributes().href,
 					});
 				})
