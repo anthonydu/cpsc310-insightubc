@@ -28,21 +28,17 @@ export class QueryManager {
 		if (firstRequirement || !Array.isArray(this.query.OPTIONS.COLUMNS)) {
 			return Promise.reject(new InsightError("Empty or missing or non-array columns"));
 		}
-		let firstColumn: string;
-		try {
-			firstColumn = this.query.OPTIONS.COLUMNS[0] as string;
-		} catch (error) {
-			return Promise.reject(new InsightError("Error reading data"));
-		}
-		const parts = firstColumn.split("_");
-		if (parts.length < 1) {
-			return Promise.reject(new InsightError(`Invalid column ${firstColumn}`));
-		}
-		const id: string = parts[0];
-		const dataset = await this.getDatasetById(id);
-		if (!Array.isArray(dataset)) {
-			return Promise.reject(new InsightError(`No dataset with id ${id}`));
-		}
+		// let firstColumn: string;
+		// try {
+		// 	firstColumn = this.query.OPTIONS.COLUMNS[0] as string;
+		// } catch (error) {
+		// 	return Promise.reject(new InsightError("Error reading data"));
+		// }
+		// const parts = firstColumn.split("_");
+		// if (parts.length < 1) {
+		// 	return Promise.reject(new InsightError(`Invalid column ${firstColumn}`));
+		// }
+
 		const valid = this.validate();
 		// logic to validate if a query references two different dataset ids
 		if (new Set(this.getIds()).size > 1) {
@@ -52,6 +48,11 @@ export class QueryManager {
 
 			const firstError: string = this.errors[0];
 			return Promise.reject(new InsightError(firstError));
+		}
+		const id: string = this.ids[0];
+		const dataset = await this.getDatasetById(id);
+		if (!Array.isArray(dataset)) {
+			return Promise.reject(new InsightError(`No dataset with id ${id}`));
 		}
 		return this.handleFinalQuery(dataset);
 
