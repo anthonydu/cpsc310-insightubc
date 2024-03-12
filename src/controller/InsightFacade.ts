@@ -74,14 +74,15 @@ export default class InsightFacade implements IInsightFacade {
 					const address = row.getElementsBy("className", "views-field-field-building-address")[0].getText();
 					const geoResponse: GeoResponse = await InsightFacade.fetchGeo(address);
 					if (geoResponse.error) {
-						throw new InsightError(`GeoResponse error for ${address}: ${geoResponse.error}`);
+						console.log(`GeoResponse error for ${address}: ${geoResponse.error}`);
+						return;
 					}
 					buildings.push({
 						fullname: titleNode.getElementsBy("tagName", "a")[0].getText(),
 						shortname: row.getElementsBy("className", "views-field-field-building-code")[0].getText(),
 						address,
 						lat: parseFloat(geoResponse.lat as unknown as string),
-						lon: parseFloat(geoResponse.lon as unknown as string) ,
+						lon: parseFloat(geoResponse.lon as unknown as string),
 						href: titleNode.getElementsBy("tagName", "a")[0].getAttributes().href,
 					});
 				})
