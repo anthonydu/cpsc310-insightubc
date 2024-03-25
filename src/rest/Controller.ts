@@ -6,6 +6,10 @@ export default class Controller {
 	private facade: IInsightFacade;
 	constructor() {
 		this.facade = new InsightFacade();
+		this.addDataset = this.addDataset.bind(this);
+		this.listDatasets = this.listDatasets.bind(this);
+		this.deleteDataset = this.deleteDataset.bind(this);
+		this.performQuery = this.performQuery.bind(this);
 	}
 
 	public async addDataset(req: Request, res: Response) {
@@ -43,10 +47,13 @@ export default class Controller {
 
 	public async performQuery(req: Request, res: Response) {
 		try {
-			console.log(`Server::echo(..) - params: ${JSON.stringify(req.params)}`);
+			console.log(`Server::performQuery(..) - params: ${JSON.stringify(req.body)}`,req.body);
+			console.log("FACADE: ",this.facade);
 			const response = await this.facade.performQuery(req.body);
 			res.status(200).json({result: response});
 		} catch (err) {
+
+			console.log("Server::performQuery(..) -Error",err);
 			res.status(400).json({error: err});
 		}
 	}
