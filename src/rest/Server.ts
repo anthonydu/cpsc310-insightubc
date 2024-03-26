@@ -1,16 +1,19 @@
 import express, {Application, Request, Response} from "express";
 import * as http from "http";
 import cors from "cors";
+import Controller from "./Controller";
 
 export default class Server {
 	private readonly port: number;
 	private express: Application;
 	private server: http.Server | undefined;
+	private controller: Controller;
 
 	constructor(port: number) {
 		console.info(`Server::<init>( ${port} )`);
 		this.port = port;
 		this.express = express();
+		this.controller = new Controller();
 
 		this.registerMiddleware();
 		this.registerRoutes();
@@ -83,8 +86,10 @@ export default class Server {
 		// This is an example endpoint this you can invoke by accessing this URL in your browser:
 		// http://localhost:4321/echo/hello
 		this.express.get("/echo/:msg", Server.echo);
-
-		// TODO: your other endpoints should go here
+		this.express.put("/dataset/:id/:kind", this.controller.addDataset);
+		this.express.delete("/dataset/:id", this.controller.deleteDataset);
+		this.express.post("/query", this.controller.performQuery);
+		this.express.get("/datasets", this.controller.listDatasets);
 
 	}
 
