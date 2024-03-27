@@ -1,5 +1,5 @@
 import {Bar} from "react-chartjs-2";
-import {useEffect, useState} from "react";
+import {useEffect, useState, memo} from "react";
 import {Chart, registerables} from "chart.js";
 import {useColorModeValue} from "@chakra-ui/react";
 
@@ -84,4 +84,5 @@ function TopCourse({datasetId, department}: {datasetId: string; department: stri
 	return <Bar options={options} data={data} key={Date.now()} />;
 }
 
-export default TopCourse;
+const MemoizedTopCourse = memo(TopCourse);
+export default MemoizedTopCourse;
