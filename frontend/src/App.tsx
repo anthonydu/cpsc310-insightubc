@@ -24,7 +24,7 @@ import {
 
 function App() {
 	const [datasets, setDatasets] = useState(Array<InsightDataset>());
-	const [id, setId] = useState<string>();
+	const [id, setId] = useState("");
 	const [kind, setKind] = useState("sections");
 	const [file, setFile] = useState<File>();
 	const [updateListener, setUpdateListener] = useState(false);
@@ -53,6 +53,10 @@ function App() {
 		}).then(() => {
 			setUpdateListener(!updateListener);
 		});
+
+		setId("");
+
+		window.scrollTo(0, 0);
 	};
 
 	const handleRemove = (id: string) => {
@@ -61,10 +65,6 @@ function App() {
 		}).then(() => {
 			setUpdateListener(!updateListener);
 		});
-	};
-
-	const handleSelect = (id: string) => {
-		setSelectedDataset(id);
 	};
 
 	return (
@@ -102,7 +102,7 @@ function App() {
 										<input
 											type="radio"
 											name="datasetSelection"
-											onChange={() => handleSelect(dataset.id)}
+											onChange={() => setSelectedDataset(dataset.id)}
 										/>
 									</Td>
 									<Td>{dataset.id}</Td>
@@ -136,6 +136,7 @@ function App() {
 								<FormLabel>ID</FormLabel>
 								<Input
 									type="text"
+									value={id}
 									onChange={(e) => setId(e.currentTarget.value)}
 									placeholder="ID must not contain '_' and has to be unique"
 									onFocus={(e) => (e.target.placeholder = "")}
