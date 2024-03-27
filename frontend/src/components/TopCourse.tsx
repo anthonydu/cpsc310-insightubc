@@ -53,7 +53,7 @@ function TopCourse({datasetId, department}: {datasetId: string; department: stri
 	const options = {
 		indexAxis: "y" as const,
 		barThickness: 30,
-		aspectRatio: courses.length ? (10 / courses.length > 2 ? 2 : 10 / courses.length) : 2,
+		aspectRatio: courses.length ? (10 / courses.length > 1.5 ? 1.5 : 10 / courses.length) : 1.5,
 		scales: {
 			x: {
 				min: 0,
