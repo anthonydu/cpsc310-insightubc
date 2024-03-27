@@ -69,8 +69,18 @@ function App() {
 
 	return (
 		<Container maxW="container.lg" padding="20px">
-			<Grid templateRows="repeat(3, auto)" templateColumns="repeat(2, 1fr)" gap="10px">
-				<GridItem colSpan={2} border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
+			<Grid
+				templateRows="repeat(3, auto)"
+				templateColumns={{base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)"}}
+				gap="10px"
+			>
+				<GridItem
+					colSpan={{base: 1, lg: 2}}
+					border="1px"
+					padding="15px"
+					borderColor="gray.200"
+					borderRadius="15px"
+				>
 					<Heading>InsightUBC &ndash; Section Insights</Heading>
 				</GridItem>
 				<GridItem border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
@@ -109,7 +119,7 @@ function App() {
 
 				<GridItem rowSpan={2} border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
 					<Heading size="lg">Insights</Heading>
-					<Flex height="100%" justifyContent="center" alignItems="center">
+					<Flex height="100%" minHeight="500px" justifyContent="center" alignItems="center">
 						{selectedDataset ? (
 							<Text>Selected Dataset: {selectedDataset}</Text>
 						) : (
