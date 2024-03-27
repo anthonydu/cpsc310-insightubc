@@ -43,35 +43,37 @@ function App() {
 			.then((data) => setDatasets(data.result));
 	}, [setDatasets, updateListener]);
 
-	useEffect(() => {
-		console.log(datasets);
-	}, [datasets]);
-
-	useEffect(() => {
-		console.log(selectedDataset);
-	}, [selectedDataset]);
-
 	const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		fetch(`http://localhost:4321/dataset/${id}/${kind}`, {
 			method: "PUT",
 			body: file,
-		}).then(() => {
-			setUpdateListener(!updateListener);
-		});
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (data.error) alert(data.error);
+				else alert("Dataset added successfully!");
+			})
+			.then(() => {
+				setUpdateListener(!updateListener);
+			});
 
 		setId("");
-
-		window.scrollTo(0, 0);
 	};
 
 	const handleRemove = (id: string) => {
 		fetch(`http://localhost:4321/dataset/${id}`, {
 			method: "DELETE",
-		}).then(() => {
-			setUpdateListener(!updateListener);
-		});
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (data.error) alert(data.error);
+				else alert("Dataset removed successfully!");
+			})
+			.then(() => {
+				setUpdateListener(!updateListener);
+			});
 	};
 
 	return (
@@ -159,6 +161,8 @@ function App() {
 									onBlur={(e) =>
 										(e.target.placeholder = 'ID must not contain "_" and has to be unique')
 									}
+									pattern="^[^_]+$"
+									required
 								/>
 							</FormControl>
 							<FormControl>
@@ -174,6 +178,7 @@ function App() {
 									type="file"
 									accept=".zip"
 									onChange={(e) => setFile(e.currentTarget.files?.[0])}
+									required
 								/>
 							</FormControl>
 							<Button type="submit">Submit</Button>

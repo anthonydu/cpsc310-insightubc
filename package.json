@@ -52,6 +52,6 @@
 		"fix": "yarn lint --fix",
 		"start:server": "ts-node src/App.ts",
 		"start:client": "yarn --cwd frontend dev",
-		"start": "yarn start:server & yarn start:client && fg"
+		"start": "yarn start:server & (sleep 2; yarn start:client) && fg"
 	}
 }
