@@ -18,6 +18,8 @@ import {
 	Stack,
 	Grid,
 	GridItem,
+	Text,
+	Flex,
 } from "@chakra-ui/react";
 
 function App() {
@@ -26,6 +28,7 @@ function App() {
 	const [kind, setKind] = useState("sections");
 	const [file, setFile] = useState<File>();
 	const [updateListener, setUpdateListener] = useState(false);
+	const [selectedDataset, setSelectedDataset] = useState<string>();
 
 	useEffect(() => {
 		fetch("http://localhost:4321/datasets")
@@ -36,6 +39,10 @@ function App() {
 	useEffect(() => {
 		console.log(datasets);
 	}, [datasets]);
+
+	useEffect(() => {
+		console.log(selectedDataset);
+	}, [selectedDataset]);
 
 	const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -56,17 +63,22 @@ function App() {
 		});
 	};
 
+	const handleSelect = (id: string) => {
+		setSelectedDataset(id);
+	};
+
 	return (
 		<Container maxW="container.lg" padding="20px">
 			<Grid templateRows="repeat(3, auto)" templateColumns="repeat(2, 1fr)" gap="10px">
-				<GridItem colSpan={2} border="1px" padding="10px" borderColor="gray.200" borderRadius="10px">
-					<Heading>Section Insights</Heading>
+				<GridItem colSpan={2} border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
+					<Heading>InsightUBC &ndash; Section Insights</Heading>
 				</GridItem>
-				<GridItem border="1px" padding="10px" borderColor="gray.200" borderRadius="10px">
+				<GridItem border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
 					<Heading size="lg">List Dataset</Heading>
 					<Table>
 						<Thead>
 							<Tr>
+								<Th></Th>
 								<Th>ID</Th>
 								<Th>Kind</Th>
 								<Th>Rows</Th>
@@ -76,6 +88,13 @@ function App() {
 						<Tbody>
 							{datasets.map((dataset) => (
 								<Tr key={dataset.id}>
+									<Td>
+										<input
+											type="radio"
+											name="datasetSelection"
+											onChange={() => handleSelect(dataset.id)}
+										/>
+									</Td>
 									<Td>{dataset.id}</Td>
 									<Td>{dataset.kind}</Td>
 									<Td>{dataset.numRows}</Td>
@@ -88,17 +107,32 @@ function App() {
 					</Table>
 				</GridItem>
 
-				<GridItem rowSpan={2} border="1px" padding="10px" borderColor="gray.200" borderRadius="10px">
-					<Heading size="lg">Query Result</Heading>
+				<GridItem rowSpan={2} border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
+					<Heading size="lg">Insights</Heading>
+					<Flex height="100%" justifyContent="center" alignItems="center">
+						{selectedDataset ? (
+							<Text>Selected Dataset: {selectedDataset}</Text>
+						) : (
+							<Text>Select a dataset to get started</Text>
+						)}
+					</Flex>
 				</GridItem>
 
-				<GridItem border="1px" padding="10px" borderColor="gray.200" borderRadius="10px">
+				<GridItem border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
 					<form onSubmit={handleAdd}>
 						<Stack spacing="10px">
 							<Heading size="lg">Add Dataset</Heading>
 							<FormControl>
-								<FormLabel>Dataset ID</FormLabel>
-								<Input type="text" onChange={(e) => setId(e.currentTarget.value)} />
+								<FormLabel>ID</FormLabel>
+								<Input
+									type="text"
+									onChange={(e) => setId(e.currentTarget.value)}
+									placeholder="ID must not contain '_' and has to be unique"
+									onFocus={(e) => (e.target.placeholder = "")}
+									onBlur={(e) =>
+										(e.target.placeholder = 'ID must not contain "_" and has to be unique')
+									}
+								/>
 							</FormControl>
 							<FormControl>
 								<FormLabel>Kind</FormLabel>
@@ -110,8 +144,12 @@ function App() {
 								</Select>
 							</FormControl>
 							<FormControl>
-								<FormLabel>Dataset File</FormLabel>
-								<Input type="file" onChange={(e) => setFile(e.currentTarget.files?.[0])} />
+								<FormLabel>File</FormLabel>
+								<Input
+									type="file"
+									accept=".zip"
+									onChange={(e) => setFile(e.currentTarget.files?.[0])}
+								/>
 							</FormControl>
 							<Button type="submit">Submit</Button>
 						</Stack>
