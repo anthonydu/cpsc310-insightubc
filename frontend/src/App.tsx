@@ -141,12 +141,17 @@ function App() {
 					{selectedDataset ? (
 						<Stack spacing="10px" marginTop="10px">
 							<Select value={selectedInsight} onChange={(e) => setSelectedInsight(e.currentTarget.value)}>
-								<option value="top-course">Top courses for each department by average</option>
+								<option value="top-course">Top courses for a department by average</option>
 								<option value="top-prof">Top Professors for a course by average</option>
 								<option value="grade-dist">Grade distribution for a course</option>
 							</Select>
 							{selectedInsight === "top-course" ? (
-								<TopCourse />
+								<>
+									<Select value="placeholder">
+										<option value="placeholder">department selector goes here</option>
+									</Select>
+									<TopCourse />
+								</>
 							) : selectedInsight === "top-prof" ? (
 								<>
 									<Select value="placeholder">
