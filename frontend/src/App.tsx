@@ -20,6 +20,10 @@ import {
 	GridItem,
 	Text,
 	Flex,
+	Switch,
+	Box,
+	useColorMode,
+	useColorModeValue,
 } from "@chakra-ui/react";
 
 function App() {
@@ -29,6 +33,9 @@ function App() {
 	const [file, setFile] = useState<File>();
 	const [updateListener, setUpdateListener] = useState(false);
 	const [selectedDataset, setSelectedDataset] = useState<string>();
+
+	const {colorMode, toggleColorMode} = useColorMode();
+	const borderColor = useColorModeValue("gray.200", "whiteAlpha.300");
 
 	useEffect(() => {
 		fetch("http://localhost:4321/datasets")
@@ -78,12 +85,17 @@ function App() {
 					colSpan={{base: 1, lg: 2}}
 					border="1px"
 					padding="15px"
-					borderColor="gray.200"
+					borderColor={borderColor}
 					borderRadius="15px"
 				>
-					<Heading>InsightUBC &ndash; Section Insights</Heading>
+					<Flex alignItems="center" gap="10px">
+						<Heading>InsightUBC&nbsp;&ndash; Section&nbsp;Insights</Heading>
+						<Box flex="1" />
+						<Text>Dark Mode</Text>
+						<Switch isChecked={colorMode === "dark"} onChange={toggleColorMode} />
+					</Flex>
 				</GridItem>
-				<GridItem border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
+				<GridItem border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
 					<Heading size="lg">List Dataset</Heading>
 					<Table>
 						<Thead>
@@ -101,6 +113,7 @@ function App() {
 									<Td>
 										<input
 											type="radio"
+											style={{width: "20px", height: "20px", cursor: "pointer"}}
 											name="datasetSelection"
 											onChange={() => setSelectedDataset(dataset.id)}
 										/>
@@ -117,18 +130,21 @@ function App() {
 					</Table>
 				</GridItem>
 
-				<GridItem rowSpan={2} border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
+				<GridItem rowSpan={2} border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
 					<Heading size="lg">Insights</Heading>
 					<Flex height="100%" minHeight="500px" justifyContent="center" alignItems="center">
 						{selectedDataset ? (
 							<Text>Selected Dataset: {selectedDataset}</Text>
 						) : (
 							<Text>Select a dataset to get started</Text>
+							// Top Professors for a course by average
+							// Top courses for each department by average
+							// Grade distribution for a course
 						)}
 					</Flex>
 				</GridItem>
 
-				<GridItem border="1px" padding="15px" borderColor="gray.200" borderRadius="15px">
+				<GridItem border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
 					<form onSubmit={handleAdd}>
 						<Stack spacing="10px">
 							<Heading size="lg">Add Dataset</Heading>
@@ -148,9 +164,7 @@ function App() {
 							<FormControl>
 								<FormLabel>Kind</FormLabel>
 								<Select value={kind} onChange={(e) => setKind(e.currentTarget.value)}>
-									<option selected value="sections">
-										Sections
-									</option>
+									<option value="sections">Sections</option>
 									<option value="rooms">Rooms</option>
 								</Select>
 							</FormControl>
