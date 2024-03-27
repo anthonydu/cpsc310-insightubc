@@ -25,6 +25,9 @@ import {
 	useColorMode,
 	useColorModeValue,
 } from "@chakra-ui/react";
+import TopProf from "./components/TopProf";
+import TopCourse from "./components/TopCourse";
+import GradeDist from "./components/GradeDist";
 
 function App() {
 	const [datasets, setDatasets] = useState(Array<InsightDataset>());
@@ -33,6 +36,7 @@ function App() {
 	const [file, setFile] = useState<File>();
 	const [updateListener, setUpdateListener] = useState(false);
 	const [selectedDataset, setSelectedDataset] = useState<string>();
+	const [selectedInsight, setSelectedInsight] = useState("top-course");
 
 	const {colorMode, toggleColorMode} = useColorMode();
 	const borderColor = useColorModeValue("gray.200", "whiteAlpha.300");
@@ -134,16 +138,39 @@ function App() {
 
 				<GridItem rowSpan={2} border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
 					<Heading size="lg">Insights</Heading>
-					<Flex height="100%" minHeight="500px" justifyContent="center" alignItems="center">
-						{selectedDataset ? (
-							<Text>Selected Dataset: {selectedDataset}</Text>
-						) : (
+					{selectedDataset ? (
+						<Stack spacing="10px" marginTop="10px">
+							<Select value={selectedInsight} onChange={(e) => setSelectedInsight(e.currentTarget.value)}>
+								<option value="top-course">Top courses for each department by average</option>
+								<option value="top-prof">Top Professors for a course by average</option>
+								<option value="grade-dist">Grade distribution for a course</option>
+							</Select>
+							{selectedInsight === "top-course" ? (
+								<TopCourse />
+							) : selectedInsight === "top-prof" ? (
+								<>
+									<Select value="placeholder">
+										<option value="placeholder">course selector goes here</option>
+									</Select>
+									<TopProf />
+								</>
+							) : selectedInsight === "grade-dist" ? (
+								<>
+									<Select value="placeholder">
+										<option value="placeholder">course selector goes here</option>
+									</Select>
+									<GradeDist />
+								</>
+							) : null}
+						</Stack>
+					) : (
+						<Flex height="100%" minHeight="500px" justifyContent="center" alignItems="center">
 							<Text>Select a dataset to get started</Text>
-							// Top Professors for a course by average
-							// Top courses for each department by average
-							// Grade distribution for a course
-						)}
-					</Flex>
+						</Flex>
+						// Top Professors for a course by average
+						// Top courses for each department by average
+						// Grade distribution for a course
+					)}
 				</GridItem>
 
 				<GridItem border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
