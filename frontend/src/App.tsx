@@ -25,9 +25,7 @@ import {
 	useColorMode,
 	useColorModeValue,
 } from "@chakra-ui/react";
-import TopProf from "./components/TopProf";
-import TopCourse from "./components/TopCourse";
-import GradeDist from "./components/GradeDist";
+import Insight from "./components/Insight";
 
 function App() {
 	const [datasets, setDatasets] = useState(Array<InsightDataset>());
@@ -36,7 +34,6 @@ function App() {
 	const [file, setFile] = useState<File>();
 	const [updateListener, setUpdateListener] = useState(false);
 	const [selectedDataset, setSelectedDataset] = useState<string>();
-	const [selectedInsight, setSelectedInsight] = useState("top-course");
 
 	const {colorMode, toggleColorMode} = useColorMode();
 	const borderColor = useColorModeValue("gray.200", "whiteAlpha.300");
@@ -139,42 +136,11 @@ function App() {
 				<GridItem rowSpan={2} border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
 					<Heading size="lg">Insights</Heading>
 					{selectedDataset ? (
-						<Stack spacing="10px" marginTop="10px">
-							<Select value={selectedInsight} onChange={(e) => setSelectedInsight(e.currentTarget.value)}>
-								<option value="top-course">Top courses for a department by average</option>
-								<option value="top-prof">Top Professors for a course by average</option>
-								<option value="grade-dist">Grade distribution for a course</option>
-							</Select>
-							{selectedInsight === "top-course" ? (
-								<>
-									<Select value="placeholder">
-										<option value="placeholder">department selector goes here</option>
-									</Select>
-									<TopCourse />
-								</>
-							) : selectedInsight === "top-prof" ? (
-								<>
-									<Select value="placeholder">
-										<option value="placeholder">course selector goes here</option>
-									</Select>
-									<TopProf />
-								</>
-							) : selectedInsight === "grade-dist" ? (
-								<>
-									<Select value="placeholder">
-										<option value="placeholder">course selector goes here</option>
-									</Select>
-									<GradeDist />
-								</>
-							) : null}
-						</Stack>
+						<Insight datasetId={selectedDataset} />
 					) : (
 						<Flex height="100%" minHeight="500px" justifyContent="center" alignItems="center">
 							<Text>Select a dataset to get started</Text>
 						</Flex>
-						// Top Professors for a course by average
-						// Top courses for each department by average
-						// Grade distribution for a course
 					)}
 				</GridItem>
 
@@ -201,7 +167,9 @@ function App() {
 								<FormLabel>Kind</FormLabel>
 								<Select value={kind} onChange={(e) => setKind(e.currentTarget.value)}>
 									<option value="sections">Sections</option>
-									<option value="rooms">Rooms</option>
+									<option value="rooms" disabled>
+										Rooms
+									</option>
 								</Select>
 							</FormControl>
 							<FormControl>
