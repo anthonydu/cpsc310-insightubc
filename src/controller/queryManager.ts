@@ -28,16 +28,7 @@ export class QueryManager {
 		if (firstRequirement || !Array.isArray(this.query.OPTIONS.COLUMNS)) {
 			return Promise.reject(new InsightError("Empty or missing or non-array columns"));
 		}
-		// let firstColumn: string;
-		// try {
-		// 	firstColumn = this.query.OPTIONS.COLUMNS[0] as string;
-		// } catch (error) {
-		// 	return Promise.reject(new InsightError("Error reading data"));
-		// }
-		// const parts = firstColumn.split("_");
-		// if (parts.length < 1) {
-		// 	return Promise.reject(new InsightError(`Invalid column ${firstColumn}`));
-		// }
+
 
 		const valid = this.validate();
 		// logic to validate if a query references two different dataset ids
