@@ -1,6 +1,6 @@
 import {Stack, Select} from "@chakra-ui/react";
 import {useState, useEffect} from "react";
-import GradeDist from "./GradeDist";
+import AvgOverYears from "./AvgOverYears";
 import TopCourse from "./TopCourse";
 import TopProf from "./TopProf";
 
@@ -14,7 +14,7 @@ function Insight({datasetId}: {datasetId: string}) {
 			<Select value={selectedInsight} onChange={(e) => setSelectedInsight(e.currentTarget.value)}>
 				<option value="top-course">Top courses for a department by average</option>
 				<option value="top-prof">Top Professors for a course by average</option>
-				<option value="grade-dist">Grade distribution for a course</option>
+				<option value="grade-dist">Average of a course over the years</option>
 			</Select>
 			{selectedInsight === "top-course" ? (
 				<>
@@ -42,10 +42,18 @@ function Insight({datasetId}: {datasetId: string}) {
 				</>
 			) : selectedInsight === "grade-dist" ? (
 				<>
-					<Select value="placeholder" onChange={() => {}}>
-						<option value="placeholder">course selector goes here</option>
-					</Select>
-					<GradeDist />
+					<DepartmentSelector
+						datasetId={datasetId}
+						selectedDepartment={selectedDepartment}
+						setSelectedDepartment={setSelectedDepartment}
+					/>
+					<CourseSelector
+						datasetId={datasetId}
+						department={selectedDepartment}
+						selectedCourse={selectedCourse}
+						setSelectedCourse={setSelectedCourse}
+					/>
+					<AvgOverYears datasetId={datasetId} department={selectedDepartment} course={selectedCourse} />
 				</>
 			) : null}
 		</Stack>
@@ -94,7 +102,7 @@ function DepartmentSelector({
 
 	return (
 		<Select value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)}>
-			<option value=""></option>
+			<option value="">Select a department</option>
 			{departments.map((department) => (
 				<option key={department} value={department}>
 					{department.toUpperCase()}
@@ -150,7 +158,8 @@ function CourseSelector({
 
 	return (
 		<Select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)}>
-			<option value=""></option>
+			<option value="">Select a course</option>
+			{department === "" ? <option value="">Select a department first!</option> : null}
 			{courses.map((course) => (
 				<option key={course} value={course}>
 					{course}
