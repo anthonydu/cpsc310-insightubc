@@ -121,7 +121,9 @@ function App() {
 											onChange={() => setSelectedDataset(dataset.id)}
 										/>
 									</Td>
-									<Td>{dataset.id}</Td>
+									<Td width="100%" maxWidth={{base: "100%", lg: "100px"}}>
+										{dataset.id}
+									</Td>
 									<Td>{dataset.kind}</Td>
 									<Td>{dataset.numRows}</Td>
 									<Td>

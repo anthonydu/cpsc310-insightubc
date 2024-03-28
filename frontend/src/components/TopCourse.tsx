@@ -1,5 +1,5 @@
 import {Bar} from "react-chartjs-2";
-import {useEffect, useState, memo} from "react";
+import {useEffect, useState, memo, useReducer} from "react";
 import {Chart, registerables} from "chart.js";
 import {useColorModeValue} from "@chakra-ui/react";
 
@@ -9,6 +9,19 @@ function TopCourse({datasetId, department}: {datasetId: string; department: stri
 	const [courses, setCourses] = useState<Array<string>>([]);
 	const [averages, setAverages] = useState<Array<number>>([]);
 	const color = useColorModeValue("black", "white");
+	// https://stackoverflow.com/questions/46240647/how-to-force-a-functional-react-component-to-render/53837442#53837442
+	const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+	// https://iq.js.org/questions/react/how-to-re-render-the-view-when-the-browser-is-resized
+	useEffect(() => {
+		// Attach the event listener to the window object
+		window.addEventListener("resize", forceUpdate);
+
+		// Remove the event listener when the component unmounts
+		return () => {
+			window.removeEventListener("resize", forceUpdate);
+		};
+	}, []);
 
 	useEffect(() => {
 		const query = {
@@ -65,6 +78,9 @@ function TopCourse({datasetId, department}: {datasetId: string; department: stri
 			y: {
 				ticks: {
 					color: color,
+					font: {
+						size: 20,
+					},
 				},
 			},
 		},
@@ -81,8 +97,8 @@ function TopCourse({datasetId, department}: {datasetId: string; department: stri
 		],
 	};
 
-	return <Bar options={options} data={data} key={Date.now()} />;
+	return <Bar options={options} data={data} key={Date.now()} onResize={forceUpdate} />;
 }
 
-const MemoizedTopCourse = memo(TopCourse);
-export default MemoizedTopCourse;
+const Memoized = memo(TopCourse);
+export default Memoized;
