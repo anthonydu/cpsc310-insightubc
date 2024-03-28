@@ -15,10 +15,8 @@ export default class Controller {
 	public async addDataset(req: Request, res: Response) {
 		try {
 			console.log(`Server::addDataset(..) - params: ${JSON.stringify(req.params)}`);
-			const id = req.params[0];
-			const kind = req.params[1];
-			const response = await this.facade.addDataset(id,req.body,
-				kind as InsightDatasetKind);
+			const response = await this.facade.addDataset(req.params.id,req.body,
+				req.params.kind as InsightDatasetKind);
 			return res.status(200).json({result: response});
 		} catch (err: any) {
 			return res.status(400).json({error: err.message});
@@ -38,8 +36,7 @@ export default class Controller {
 	public async deleteDataset(req: Request, res: Response) {
 		try {
 			console.log(`Server::deleteDataset(..) - params: ${JSON.stringify(req.params)}`);
-			const id = req.params[0];
-			const response = await this.facade.removeDataset(id);
+			const response = await this.facade.removeDataset(req.params.id);
 			return res.status(200).json({result: response});
 		} catch (err: any) {
 			const is404 = err instanceof NotFoundError;
