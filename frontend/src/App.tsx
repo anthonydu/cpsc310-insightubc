@@ -41,7 +41,7 @@ function App() {
 	useEffect(() => {
 		fetch("http://localhost:4321/datasets")
 			.then((res) => res.json())
-			.then((data) => setDatasets(data.result.filter((dataset: InsightDataset) => dataset.kind === "sections")))
+			.then((data) => setDatasets(data.result))
 			.catch((err) => alert(err));
 	}, [setDatasets, updateListener]);
 
