@@ -41,7 +41,7 @@ function App() {
 	useEffect(() => {
 		fetch("http://localhost:4321/datasets")
 			.then((res) => res.json())
-			.then((data) => setDatasets(data.result));
+			.then((data) => setDatasets(data.result.filter((dataset: InsightDataset) => dataset.kind === "sections")));
 	}, [setDatasets, updateListener]);
 
 	const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
