@@ -97,7 +97,13 @@ function AvgOverYears({datasetId, department, course}: {datasetId: string; depar
 	};
 
 	const data = {
-		labels: years,
+		labels: years.map((year) => {
+			if (year == "1900") {
+				return "Overall";
+			} else {
+				return year;
+			}
+		}),
 		datasets: [
 			{
 				label: "Overall Average",
