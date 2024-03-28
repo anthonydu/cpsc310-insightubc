@@ -3,19 +3,7 @@ import "./App.css";
 import {InsightDataset} from "../../src/controller/IInsightFacade";
 import {
 	Heading,
-	FormControl,
-	Input,
-	Button,
-	FormLabel,
-	Table,
-	Thead,
-	Tbody,
-	Tr,
-	Th,
-	Td,
-	Select,
 	Container,
-	Stack,
 	Grid,
 	GridItem,
 	Text,
@@ -26,6 +14,8 @@ import {
 	useColorModeValue,
 } from "@chakra-ui/react";
 import Insight from "./components/Insight";
+import AddDatasetForm from "./components/AddDatasetForm";
+import ListDatasetTable from "./components/ListDatasetTable";
 
 function App() {
 	const [datasets, setDatasets] = useState(Array<InsightDataset>());
@@ -85,6 +75,7 @@ function App() {
 				templateColumns={{base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)"}}
 				gap="10px"
 			>
+				{/* Title Section */}
 				<GridItem
 					colSpan={{base: 1, lg: 2}}
 					border="1px"
@@ -99,43 +90,18 @@ function App() {
 						<Switch isChecked={colorMode === "dark"} onChange={toggleColorMode} />
 					</Flex>
 				</GridItem>
+
+				{/* List Dataset Section */}
 				<GridItem border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
 					<Heading size="lg">List Dataset</Heading>
-					<Table>
-						<Thead>
-							<Tr>
-								<Th></Th>
-								<Th>ID</Th>
-								<Th>Kind</Th>
-								<Th>Rows</Th>
-								<Th>Actions</Th>
-							</Tr>
-						</Thead>
-						<Tbody>
-							{datasets.map((dataset) => (
-								<Tr key={dataset.id}>
-									<Td>
-										<input
-											type="radio"
-											style={{width: "20px", height: "20px", cursor: "pointer"}}
-											name="datasetSelection"
-											onChange={() => setSelectedDataset(dataset.id)}
-										/>
-									</Td>
-									<Td width="100%" maxWidth={{base: "100%", lg: "100px"}}>
-										{dataset.id}
-									</Td>
-									<Td>{dataset.kind}</Td>
-									<Td>{dataset.numRows}</Td>
-									<Td>
-										<Button onClick={() => handleRemove(dataset.id)}>Remove</Button>
-									</Td>
-								</Tr>
-							))}
-						</Tbody>
-					</Table>
+					<ListDatasetTable
+						datasets={datasets}
+						setSelectedDataset={setSelectedDataset}
+						handleRemove={handleRemove}
+					/>
 				</GridItem>
 
+				{/* Insights Section */}
 				<GridItem rowSpan={2} border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
 					<Heading size="lg">Insights</Heading>
 					{selectedDataset ? (
@@ -147,46 +113,16 @@ function App() {
 					)}
 				</GridItem>
 
+				{/* Add Dataset Section */}
 				<GridItem border="1px" padding="15px" borderColor={borderColor} borderRadius="15px">
-					<form onSubmit={handleAdd}>
-						<Stack spacing="10px">
-							<Heading size="lg">Add Dataset</Heading>
-							<FormControl>
-								<FormLabel>ID</FormLabel>
-								<Input
-									type="text"
-									value={id}
-									onChange={(e) => setId(e.currentTarget.value)}
-									placeholder="ID must not contain '_' and has to be unique"
-									onFocus={(e) => (e.target.placeholder = "")}
-									onBlur={(e) =>
-										(e.target.placeholder = 'ID must not contain "_" and has to be unique')
-									}
-									pattern="^[^_]+$"
-									required
-								/>
-							</FormControl>
-							<FormControl>
-								<FormLabel>Kind</FormLabel>
-								<Select value={kind} onChange={(e) => setKind(e.currentTarget.value)}>
-									<option value="sections">Sections</option>
-									<option value="rooms" disabled>
-										Rooms
-									</option>
-								</Select>
-							</FormControl>
-							<FormControl>
-								<FormLabel>File</FormLabel>
-								<Input
-									type="file"
-									accept=".zip"
-									onChange={(e) => setFile(e.currentTarget.files?.[0])}
-									required
-								/>
-							</FormControl>
-							<Button type="submit">Submit</Button>
-						</Stack>
-					</form>
+					<AddDatasetForm
+						id={id}
+						setId={setId}
+						kind={kind}
+						setKind={setKind}
+						setFile={setFile}
+						handleAdd={handleAdd}
+					/>
 				</GridItem>
 			</Grid>
 		</Container>
