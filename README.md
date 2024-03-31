@@ -1,9 +1,29 @@
-# CPSC 310 Project Repository 
+# CPSC 310 Project Repository
 
 This repository contains starter code for the class project.
 Please keep your repository private.
 
 For information about the project, autotest, and the checkpoints, see the course webpage.
+
+## Sections Insight Documentation
+
+### Description
+
+Section Insight is a service that allows users to add, view, and manage datasets containing course sections. The service provides a user interface that allows users to view a list of sections, add new sections, and view three graphical insights about the dataset. The service also provides a REST API that allows users to interact with the service programmatically.
+
+### Video Link
+
+### Run the Project
+
+To run the project, the correct version of Node, and packages must be installed. The project can be run in dev mode on your localhost by following the steps below:
+
+1. `cd` to the project root directory
+
+2. running `npm run start` or `yarn start` will start both the server and the client
+
+3. in the console, Vite will provide a local address for you to access the project
+
+4. open the address in your browser to view the project
 
 ## Configuring your environment
 
@@ -23,11 +43,12 @@ To do this, follow these steps; the specifics of each step will vary based on yo
 Once your environment is configured you need to further prepare the project's tooling and dependencies.
 In the project folder:
 
-1. `yarn install` to download the packages specified in your project's *package.json* to the *node_modules* directory.
+1. `yarn install` to download the packages specified in your project's _package.json_ to the _node_modules_ directory.
 
 1. `yarn build` to compile your project. You must run this command after making changes to your TypeScript files. If it does not build locally, AutoTest will not be able to build it.
 
 1. `yarn test` to run the test suite.
+
     - To run with coverage, run `yarn cover`
 
 1. `yarn lint` to lint your project code. If it does not lint locally, AutoTest will not run your tests when you submit your code.
@@ -36,7 +57,7 @@ In the project folder:
 
 If you are curious, some of these commands are actually shortcuts defined in [package.json -> scripts](./package.json).
 
-## Running and testing from an IDE 
+## Running and testing from an IDE
 
 IntelliJ Ultimate should be automatically configured the first time you open the project (IntelliJ Ultimate is a free download through the [JetBrains student program](https://www.jetbrains.com/community/education/#students/)).
 
