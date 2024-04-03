@@ -5,7 +5,7 @@ Please keep your repository private.
 
 For information about the project, autotest, and the checkpoints, see the course webpage.
 
-## Sections Insight Documentation
+## Sections Insight Documentation (C3)
 
 ### Description
 
@@ -13,17 +13,23 @@ Section Insight is a service that allows users to add, view, and manage datasets
 
 ### Video Link
 
+[Section Insight Video](https://youtu.be/)
+
+If the link does not work, copy and paste the following URL into your browser:
+
+`https://youtu.be/`
+
 ### Run the Project
 
-To run the project, the correct version of Node, and packages must be installed. The project can be run in dev mode on your localhost by following the steps below:
+To run the project, the correct version of Node and dependant packages must be installed (`yarn install`). The project can be run in dev mode on your localhost by following the steps below:
 
-1. `cd` to the project root directory
+1. `cd` to the project **root directory**
 
-2. running `npm run start` or `yarn start` will start both the server and the client
+2. running `npm run start` or `yarn start` will start both the server and the client in dev mode (to start the server and the client separately, run `yarn start:server` and `yarn start:client`)
 
-3. in the console, Vite will provide a local address for you to access the project
+3. in the terminal, Vite will provide a local address for you to access the project's frontend
 
-4. open the address in your browser to view the project
+4. open the address in your browser to view the project (if the server takes a long time to start, make sure to refresh the page after the server has started)
 
 ## Configuring your environment
 
