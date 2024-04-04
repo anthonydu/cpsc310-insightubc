@@ -13,11 +13,11 @@ Section Insight is a service that allows users to add, view, and manage datasets
 
 ### Video Link
 
-[Section Insight Video](https://youtu.be/)
+[Section Insight Video](https://youtu.be/rp5KNAdS2Bg)
 
 If the link does not work, copy and paste the following URL into your browser:
 
-`https://youtu.be/`
+<https://youtu.be/rp5KNAdS2Bg>
 
 ### Run the Project
 
