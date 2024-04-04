@@ -17,6 +17,7 @@ export default class Controller {
 			console.log(`Server::addDataset(..) - params: ${JSON.stringify(req.params)}`);
 			const id = req.params.id;
 			const kind = req.params.kind;
+			console.log(req.body);
 
 			const response = await this.facade.addDataset(id,req.body,
 				kind as InsightDatasetKind);
