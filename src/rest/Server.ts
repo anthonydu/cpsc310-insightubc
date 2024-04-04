@@ -71,6 +71,10 @@ export default class Server {
 		});
 	}
 
+	public getApp(){
+		return this.express;
+	}
+
 	// Registers middleware to parse request before passing them to request handlers
 	private registerMiddleware() {
 		// JSON parser must be place before raw parser because of wildcard matching done by raw parser below
