@@ -1,22 +1,21 @@
 import Server from "../../src/rest/Server";
 import InsightFacade from "../../src/controller/InsightFacade";
 
-
 import {expect} from "chai";
 import request, {Response} from "supertest";
 import {clearDisk, getContentFromArchives} from "../TestUtil";
 import {InsightDatasetKind} from "../../src/controller/IInsightFacade";
+const fs = require("fs-extra");
 
 describe("Facade D3", function () {
-
-	let campus: string;
+	let campus: Buffer;
 	let sections: string;
 	let facade: InsightFacade;
 	let server: Server;
 
 	before(async function () {
-		campus = await getContentFromArchives("campus.zip");
-		sections =  await getContentFromArchives("pair.zip");
+		campus = fs.readFileSync("test/resources/archives/campus.zip");
+		sections = fs.readFileSync("test/resources/archives/pair.zip");
 		facade = new InsightFacade();
 		server = new Server(4321);
 		await server.start();
@@ -58,11 +57,12 @@ describe("Facade D3", function () {
 	// 	}
 	// });
 
-	it("Echo", function () {
-		const endpoint = "echo/HELLO";
+	it("Test add dataset", function () {
+		const endpoint = "/dataset/random/rooms";
 		try {
 			return request("http://localhost:4321")
-				.get(endpoint)
+				.put(endpoint)
+				.send(campus)
 				.set("Content-Type", "application/x-zip-compressed")
 				.then(function (res: Response) {
 					// some logging here please!
@@ -78,7 +78,6 @@ describe("Facade D3", function () {
 			expect.fail();
 		}
 	});
-
 
 	// The other endpoints work similarly. You should be able to find all instructions at the supertest documentation
 });
