@@ -34,10 +34,10 @@ export default function testInsightFacade() {
 			await clearDisk();
 		});
 
-		// testAddDataset();
-		// testListDatasets();
-		// testRemoveDataset();
-		// testPerformQuery();
+		testAddDataset();
+		testListDatasets();
+		testRemoveDataset();
+		testPerformQuery();
 	});
 }
 
