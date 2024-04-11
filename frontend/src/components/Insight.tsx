@@ -87,14 +87,17 @@ function DepartmentSelector({
 
 		console.log(JSON.stringify(departmentsQuery));
 
-		fetch("http://localhost:4321/query", {
+		fetch(`${import.meta.env.VITE_SERVER_HOST}/query`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(departmentsQuery),
 		})
-			.then((res) => res.json())
+			.then(async (res) => {
+				if (!res.ok) throw new Error((await res.json()).error);
+				return res.json();
+			})
 			.then((data) => {
 				setDepartments(data.result.map((row: {[key: string]: string}) => row[`${datasetId}_dept`]));
 			});
@@ -143,14 +146,17 @@ function CourseSelector({
 
 		console.log(JSON.stringify(coursesQuery));
 
-		fetch("http://localhost:4321/query", {
+		fetch(`${import.meta.env.VITE_SERVER_HOST}/query`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(coursesQuery),
 		})
-			.then((res) => res.json())
+			.then(async (res) => {
+				if (!res.ok) throw new Error((await res.json()).error);
+				return res.json();
+			})
 			.then((data) => {
 				setCourses(data.result.map((row: {[key: string]: string}) => row[`${datasetId}_id`]));
 			});

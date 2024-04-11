@@ -29,8 +29,11 @@ function App() {
 	const borderColor = useColorModeValue("gray.200", "whiteAlpha.300");
 
 	useEffect(() => {
-		fetch("http://localhost:4321/datasets")
-			.then((res) => res.json())
+		fetch(`${import.meta.env.VITE_SERVER_HOST}/datasets`)
+			.then(async (res) => {
+				if (!res.ok) throw new Error((await res.json()).error);
+				return res.json();
+			})
 			.then((data) => setDatasets(data.result))
 			.catch((err) => alert(err));
 	}, [setDatasets, updateListener]);
@@ -38,11 +41,14 @@ function App() {
 	const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		fetch(`http://localhost:4321/dataset/${id}/${kind}`, {
+		fetch(`${import.meta.env.VITE_SERVER_HOST}/dataset/${id}/${kind}`, {
 			method: "PUT",
 			body: file,
 		})
-			.then((res) => res.json())
+			.then(async (res) => {
+				if (!res.ok) throw new Error((await res.json()).error);
+				return res.json();
+			})
 			.then((data) => {
 				if (data.error) alert(data.error);
 				else alert("Dataset added successfully!");
@@ -55,10 +61,13 @@ function App() {
 	};
 
 	const handleRemove = (id: string) => {
-		fetch(`http://localhost:4321/dataset/${id}`, {
+		fetch(`${import.meta.env.VITE_SERVER_HOST}/dataset/${id}`, {
 			method: "DELETE",
 		})
-			.then((res) => res.json())
+			.then(async (res) => {
+				if (!res.ok) throw new Error((await res.json()).error);
+				return res.json();
+			})
 			.then((data) => {
 				if (data.error) alert(data.error);
 				else alert("Dataset removed successfully!");

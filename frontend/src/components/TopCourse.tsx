@@ -49,14 +49,17 @@ function TopCourse({datasetId, department}: {datasetId: string; department: stri
 			},
 		};
 
-		fetch("http://localhost:4321/query", {
+		fetch(`${import.meta.env.VITE_SERVER_HOST}/query`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(query),
 		})
-			.then((res) => res.json())
+			.then(async (res) => {
+				if (!res.ok) throw new Error((await res.json()).error);
+				return res.json();
+			})
 			.then((data) => {
 				setCourses(data.result.map((row: {[key: string]: string}) => row[`${datasetId}_id`]));
 				setAverages(data.result.map((row: {[key: string]: number}) => row["overallAvg"]));

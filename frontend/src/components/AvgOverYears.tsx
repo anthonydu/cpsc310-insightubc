@@ -58,14 +58,17 @@ function AvgOverYears({datasetId, department, course}: {datasetId: string; depar
 			},
 		};
 
-		fetch("http://localhost:4321/query", {
+		fetch(`${import.meta.env.VITE_SERVER_HOST}/query`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(query),
 		})
-			.then((res) => res.json())
+			.then(async (res) => {
+				if (!res.ok) throw new Error((await res.json()).error);
+				return res.json();
+			})
 			.then((data) => {
 				setYears(data.result.map((row: {[key: string]: string}) => row[`${datasetId}_year`]));
 				setYears((allYears) => allYears.slice(0, 10).reverse());
